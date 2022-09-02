@@ -1,0 +1,30 @@
+{
+  "Title": "Fearful Crying",
+  "Type": "game",
+  "Org": "local",
+  "Ident": "fearful_crying",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "ResourcePaths": [],
+  "HasCode": true,
+  "CodePath": "/code/",
+  "RootNamespace": null,
+  "Metadata": {
+    "MaxPlayers": 6,
+    "MinPlayers": 1,
+    "GameNetworkType": "Multiplayer",
+    "MapSelect": "Tagged",
+    "MapList": [
+      "ffc_chapter1"
+    ],
+    "RankType": "None",
+    "PerMapRanking": false,
+    "LeaderboardType": "None",
+    "ProjectTemplate": null,
+    "GameCategory": "Horror",
+    "ControlModes": {
+      "Keyboard": true
+    }
+  }
+}
