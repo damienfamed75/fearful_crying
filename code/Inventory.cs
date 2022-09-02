@@ -37,6 +37,7 @@ partial class Inventory : BaseInventory
 
 	public bool IsCarryingType(Type t)
 	{
+		// Returns entities that are of type T
 		return List.Any( x => x?.GetType() == t );
 	}
 

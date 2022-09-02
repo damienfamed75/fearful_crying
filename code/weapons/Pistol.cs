@@ -3,8 +3,15 @@
 
 public partial class Pistol : Weapon
 {
+	// shooting information.
+	protected float spread => 0.02f;
+	protected float force => 1.0f;
+	protected float damage => 10.0f;
+	protected float bulletSize => 3.0f;
+
 	public override string ViewModelPath => "weapons/rust_pistol/v_rust_pistol.vmdl";
 
+	// Firing rates
 	public override float PrimaryRate => 15f;
 	public override float SecondaryRate => 1f;
 
@@ -29,11 +36,13 @@ public partial class Pistol : Weapon
 		TimeSinceSecondaryAttack = 0;
 
 		// Player animation for pistol attack.
-		(Owner as AnimatedEntity)?.SetAnimParameter( "b_attack", true );
+		if (Owner is AnimatedEntity at) {
+			at.SetAnimParameter( "b_attack", true );
+		}
 
 		ShootEffects();
 		PlaySound( "rust_pistol.shoot" );
-		ShootBullet( 0.0f, 1.0f, 10f, 3f ); //!TODO make constants.
+		ShootBullet( spread, force, damage, bulletSize );
 	}
 
 	private void Discharge()
@@ -49,7 +58,7 @@ public partial class Pistol : Weapon
 
 		ShootEffects();
 		PlaySound("rust_pistol.shoot");
-		ShootBullet( pos, rot.Forward, 0.0f, 1.0f, 10f, 3f ); //!TODO make constants.
+		ShootBullet( pos, rot.Forward, spread, force, damage, bulletSize );
 
 		// Apply impulse backward on the weapon.
 		ApplyAbsoluteImpulse( rot.Backward * 200f );

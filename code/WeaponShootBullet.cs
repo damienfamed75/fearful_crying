@@ -2,7 +2,15 @@
 
 public partial class Weapon : BaseWeapon, IUse
 {
-	// Shoot a single bullet.
+	/// <summary>
+	/// Shoot a single bullet.
+	/// </summary>
+	/// <param name="pos">starting position</param>
+	/// <param name="dir">direction of the bullet</param>
+	/// <param name="spread">amount of randomness for spreading the bullet</param>
+	/// <param name="force">amount of force applied to what the bullet hits</param>
+	/// <param name="damage">amount of damage the bullet deals</param>
+	/// <param name="bulletSize">the bullet size</param>
 	public virtual void ShootBullet( Vector3 pos, Vector3 dir, float spread, float force, float damage, float bulletSize )
 	{
 		var forward = dir;
@@ -31,14 +39,28 @@ public partial class Weapon : BaseWeapon, IUse
 		}
 	}
 
-	// Shoot bullet will shoot a single bullet from the owner's view point.
+	/// <summary>
+	/// Shoot a single bullet from the owner's viewpoint
+	/// </summary>
+	/// <param name="spread">amount of randomness for spreading the bullet</param>
+	/// <param name="force">amount of force applied to what the bullet hits</param>
+	/// <param name="damage">amount of damage the bullet deals</param>
+	/// <param name="bulletSize">the bullet size</param>
 	public virtual void ShootBullet( float spread, float force, float damage, float bulletSize )
 	{
 		Rand.SetSeed( Time.Tick );
 		ShootBullet( Owner.EyePosition, Owner.EyeRotation.Forward, spread, force, damage, bulletSize );
 	}
 
-	// Shoot multiple bullets from the owner's view point.
+	/// <summary>
+	/// Shoots multiple bullets from the owner's viewpoint.
+	/// This can be useful for shotguns.
+	/// </summary>
+	/// <param name="numBullets">number of bullets being shot</param>
+	/// <param name="spread">amount of randomness for spreading the bullet</param>
+	/// <param name="force">amount of force applied to what the bullet hits</param>
+	/// <param name="damage">amount of damage the bullet deals</param>
+	/// <param name="bulletSize">the bullet size</param>
 	public virtual void ShootBullets( int numBullets, float spread, float force, float damage, float bulletSize )
 	{
 		var pos = Owner.EyePosition;

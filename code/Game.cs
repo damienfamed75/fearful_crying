@@ -33,6 +33,10 @@ public partial class MyGame : Sandbox.Game
 
 	public MyGame()
 	{
+		if (IsServer) {
+			// Create hud.
+			_ = new FearfulCryingHud();
+		}
 	}
 
 	/// <summary>
