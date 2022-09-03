@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 //
 // You don't need to put things in a namespace, but it doesn't hurt.
 //
-namespace Sandbox;
+namespace FearfulCry;
 
 /// <summary>
 /// This is your game class. This is an entity that is created serverside when
@@ -19,10 +19,21 @@ namespace Sandbox;
 /// </summary>
 public partial class MyGame : Sandbox.Game
 {
+	[Net, Change]
+	public int NumClients { get; set; }
+	/// <summary>
+	/// Called automatically when NumClients is changed because of the attribute.
+	/// See: https://wiki.facepunch.com/sbox/Network_Basics#howwilliknowwhenmyvariablegetsupdated
+	/// </summary>
+	private void OnNumClientsChanged(int oldVal, int newVal)
+	{
+		Log.Info( $"Number of clients changed. before({oldVal}) after({newVal})" );
+	}
+
 	/// <summary>
 	/// Console Commands...
 	/// </summary>
-	
+
 	[ConCmd.Admin("im_a_cheater")]
 	public static void FirstConsoleCommand()
 	{
@@ -61,8 +72,10 @@ public partial class MyGame : Sandbox.Game
 		if ( randomSpawnPoint != null )
 		{
 			var tx = randomSpawnPoint.Transform;
-			tx.Position = tx.Position + Vector3.Up * 50.0f; // raise it up
+			tx.Position = tx.Position + Vector3.Up * 20.0f; // raise it up
 			pawn.Transform = tx;
 		}
+
+		NumClients++;
 	}
 }

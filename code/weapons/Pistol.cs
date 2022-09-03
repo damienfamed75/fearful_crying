@@ -1,6 +1,9 @@
 ﻿using Sandbox;
+using SandboxEditor;
 
-
+[Library("weapon_pistol"), HammerEntity]
+[Title("Pistol"), Category("Weapon"), Icon("place")]
+[EditorModel("weapons/rust_pistol/rust_pistol.vmdl")]
 public partial class Pistol : Weapon
 {
 	// shooting information.

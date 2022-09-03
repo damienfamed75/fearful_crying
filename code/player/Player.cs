@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sandbox;
 
-namespace Sandbox.player;
+namespace FearfulCry.player;
 
 partial class FearfulCryPlayer : Player
 {
@@ -13,8 +14,8 @@ partial class FearfulCryPlayer : Player
 
 	private DamageInfo lastDamage;
 
-	private const Int32 _runSpeed = 500;
-	private const Int32 _walkSpeed = 200;
+	private const Int32 _runSpeed = 300;
+	private const Int32 _walkSpeed = 150;
 
 	/// <summary>
 	/// The clothing container is what dresses the citizen.
@@ -47,6 +48,55 @@ partial class FearfulCryPlayer : Player
 		return base.GetActiveController();
 	}
 
+	public override void OnKilled()
+	{
+		base.OnKilled();
+		// For certain types of damage, do different things.
+		if (lastDamage.Flags.HasFlag(DamageFlags.Blunt))
+		{
+			Particles.Create( "particles/impact.flesh-big.vpcf", lastDamage.Position );
+			PlaySound( "kersplat" );
+		}
+		// Become a ragdoll.
+		BecomeRagdollOnClient(
+			Velocity,
+			lastDamage.Flags,
+			lastDamage.Position,
+			lastDamage.Force,
+			GetHitboxBone( lastDamage.HitboxIndex )
+		);
+
+		Controller = null;
+		EnableAllCollisions = false;
+		EnableDrawing = false;
+		CameraMode = new SpectateRagdollCamera();
+
+		foreach (var child in Children) {
+			child.EnableDrawing = false;
+		}
+		// Drop the currently held item and delete the rest of the items.
+		Inventory.DropActive();
+		Inventory.DeleteContents();
+	}
+
+	public override void TakeDamage( DamageInfo info )
+	{
+		if (GetHitboxGroup(info.HitboxIndex) == 1) {
+			info.Damage *= 10.0f;
+		}
+		lastDamage = info;
+
+		TookDamage( lastDamage.Flags, lastDamage.Position, lastDamage.Force );
+
+		base.TakeDamage( info );
+	}
+
+	[ClientRpc]
+	public void TookDamage(DamageFlags damageFlags, Vector3 forcePos, Vector3 force)
+	{
+
+	}
+
 	public override void Respawn()
 	{
 		// Set the player model to the citizen model.
@@ -73,7 +123,9 @@ partial class FearfulCryPlayer : Player
 		Inventory.Add( new Pistol(), true);
 
 		CameraMode = new FirstPersonCamera();
-		
+
+		Tags.Add( "player" );
+
 		base.Respawn();
 	}
 
@@ -129,7 +181,6 @@ partial class FearfulCryPlayer : Player
 			}
 
 			timeSinceJumpReleased = 0;
-			Log.Info( Map.Name );
 		}
 		
 		// If cardinal directional movement detected.

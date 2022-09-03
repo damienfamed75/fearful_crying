@@ -1,0 +1,85 @@
+using System;
+using Sandbox;
+
+namespace FearfulCry.Enemies;
+
+/// <summary>
+/// BaseNpc is based on gvarados1's BaseNpc class made for Zombie Horde.
+/// see: https://github.com/gvarados1/sbox-npc-zombie-horde/blob/main/code/Zombies/BaseNpc.cs
+/// </summary>
+[Category("NPC")]
+public partial class BaseNpc : AnimatedEntity
+{
+	private DamageInfo lastDamage;
+    /// <summary>
+	/// criticalHitboxGroup represents where the player can hit this NPC to get
+	/// a critical hit. For instance, for the Citizen model the head is 1.
+	/// </summary>
+	protected int criticalHitboxGroup => 1;
+    /// <summary>
+	/// If a critical hitbox group is hit, then apply this critical hit modifier
+	/// to the incoming damage.
+	/// </summary>
+	protected float criticalHitModifier => 2.0f;
+
+	public override void Spawn()
+    {
+		base.Spawn();
+		Tags.Add( "npc" );
+	}
+
+	public override void TakeDamage( DamageInfo info )
+	{
+        // Save the last damage information.
+		lastDamage = info;
+
+        // if the critical hitbox group is damaged, then multiply the damage
+        // by the critical hit modifier.
+        if (GetHitboxGroup(info.HitboxIndex) == criticalHitboxGroup) {
+			info.Damage *= criticalHitModifier;
+		}
+
+        // Procedurally affects the animgraph to twitch according to where this
+        // entity was hit.
+		this.ProceduralHitReaction( info );
+
+		base.TakeDamage( info );
+	}
+
+	public override void OnKilled()
+	{
+		base.OnKilled();
+
+        if (lastDamage.Flags.HasFlag(DamageFlags.Blast)) {
+            // Turn off prediction.
+            using (Prediction.Off()) {
+				var particles = Particles.Create( "particles/gib.vpcf" );
+                if (particles != null) {
+                    //! TODO remove magic number.
+					particles.SetPosition( 0, Position + Vector3.Up * 40 );
+				}
+			}
+        } else {
+            // Become Ragdoll
+            BecomeRagdollOnClient(
+                lastDamage.Force,
+                GetHitboxBone( lastDamage.HitboxIndex )
+            );
+        }
+	}
+
+    [ClientRpc]
+    public virtual void PlaySoundOnClient(string sound)
+    {
+		Sound.FromWorld( sound, Position + Vector3.Up * 60 );
+	}
+
+    public virtual void DamagedEffects()
+    {
+		Velocity *= 0.1f;
+        if (Health > 0) {
+            //! TODO create sounds.
+			// PlaySoundOnClient( "zombie.hurt" );
+		}
+	}
+}
