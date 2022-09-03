@@ -26,7 +26,7 @@
   <PropertyGroup>
 	<OutputPath>Z:\Steam\steamapps\common\sbox/.vs/output/</OutputPath>
 	<DocumentationFile>Z:\Steam\steamapps\common\sbox/.vs/output/fearful_crying.xml</DocumentationFile>
-	<RootNamespace>Sandbox</RootNamespace>
+	<RootNamespace>FearfulCrying</RootNamespace>
 	<Nullable>disable</Nullable>
   </PropertyGroup>
 

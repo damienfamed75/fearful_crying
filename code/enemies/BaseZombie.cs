@@ -14,8 +14,6 @@ public enum ZombieState
 {
     Wander,
     Chase,
-    Lure,
-    Burning
 }
 
 [Library("enemy_basezombie"), HammerEntity]
@@ -45,7 +43,7 @@ public partial class BaseZombie : BaseNpc
 	public float RunSpeed = Rand.Float( 150, 170 ); // for reference, the player speed is 300
 	
 	public float AttackSpeed = 1.0f;
-	public float AttackDamage = 5.0f;
+	public float AttackDamage = 20.0f;
 	public static float StepSize = 20f;
     public TimeSince TimeSinceAttacked = 0;
 	public TimeUntil TimeUntilUnstunned = 0;
@@ -64,7 +62,7 @@ public partial class BaseZombie : BaseNpc
         );
 
 		UpdateClothes();
-		Dress();
+		Dress(Color.Parse("#8cab7e"), Color.Parse("#A3A3A3"));
 
 		EnableHitboxes = true;
 		Speed = Rand.Float( 250, 300 ); //! TODO remove magic number

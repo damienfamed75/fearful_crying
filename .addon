@@ -1,13 +1,15 @@
 {
   "Title": "Fearful Crying",
   "Type": "game",
-  "Org": "local",
+  "Org": "gimlet",
   "Ident": "fearful_crying",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
   "ResourcePaths": [
-    "/ui/"
+    "/particles/*",
+    "/maps/*",
+    "/code/ui/*"
   ],
   "HasCode": true,
   "CodePath": "/code/",
@@ -27,6 +29,11 @@
     "GameCategory": "Horror",
     "ControlModes": {
       "Keyboard": true
+    },
+    "Compiler": {
+      "RootNamespace": "FearfulCrying",
+      "DefineConstants": "SANDBOX;ADDON;DEBUG",
+      "NoWarn": "1701;1702;1591;"
     }
   }
 }

@@ -81,8 +81,10 @@ partial class FearfulCryPlayer : Player
 
 	public override void TakeDamage( DamageInfo info )
 	{
+		// If the player was hit in the head (which is HitboxGroup 1)
+		// then double the damage.
 		if (GetHitboxGroup(info.HitboxIndex) == 1) {
-			info.Damage *= 10.0f;
+			info.Damage *= 2.0f;
 		}
 		lastDamage = info;
 
@@ -125,6 +127,9 @@ partial class FearfulCryPlayer : Player
 		CameraMode = new FirstPersonCamera();
 
 		Tags.Add( "player" );
+
+		Health = 100;
+		Log.Info( $"Player default health {Health}" );
 
 		base.Respawn();
 	}

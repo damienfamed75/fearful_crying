@@ -21,6 +21,10 @@ public partial class BaseNpc : AnimatedEntity
 	/// to the incoming damage.
 	/// </summary>
 	protected float criticalHitModifier => 2.0f;
+	/// <summary>
+	/// path to the particles used for when this Npc dies from a blast explosion.
+	/// </summary>
+	protected string blastParticles => "particles/impact.flesh-big.vpcf";
 
 	public override void Spawn()
     {
@@ -53,12 +57,18 @@ public partial class BaseNpc : AnimatedEntity
         if (lastDamage.Flags.HasFlag(DamageFlags.Blast)) {
             // Turn off prediction.
             using (Prediction.Off()) {
-				var particles = Particles.Create( "particles/gib.vpcf" );
+				// Bloody explosion.
+				var particles = Particles.Create( blastParticles );
                 if (particles != null) {
                     //! TODO remove magic number.
 					particles.SetPosition( 0, Position + Vector3.Up * 40 );
 				}
 			}
+			// Become Ragdoll
+            BecomeRagdollOnClient(
+                (lastDamage.Force / 4) + Vector3.Up*300, // Dampen and send up.
+                GetHitboxBone( lastDamage.HitboxIndex )
+            );
         } else {
             // Become Ragdoll
             BecomeRagdollOnClient(

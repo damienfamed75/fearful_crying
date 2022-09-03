@@ -7,6 +7,75 @@ namespace FearfulCry.Enemies;
 public partial class BaseNpc
 {
     public ClothingContainer Clothing { get; protected set; }
+	private Color defaultRenderColor => Color.White;
+
+    /// <summary>
+	/// Dress dresses the entity with what's inside the clothing container.
+	/// It's recommended to call UpdateClothes() before this.
+	/// 
+	/// Params are optional and support null conditionals.
+	/// </summary>
+	/// <param name="renderingColor">Rendering color of the skin</param>
+	/// <param name="clothesColor">Clothes color</param>
+	/// <example>
+	/// Dress(Color.Blue, Color.Parse("#4dc223"))
+	/// </example>
+	public async void Dress(Color? renderingColor = default, Color? clothesColor = default)
+    {   
+        // If either color params are default or invalid then override with default white.
+        if (renderingColor.GetValueOrDefault().Equals(default)) {
+			renderingColor = defaultRenderColor;
+		}
+        if (clothesColor.GetValueOrDefault().Equals(default)) {
+			clothesColor = defaultRenderColor;
+		}
+
+        // Reduce the chance of skins not working.
+		ClearMaterialOverride();
+
+        // Return is invalid.
+        if (!this.IsValid())
+			return;
+
+        // Set rendering color to param.
+		RenderColor = renderingColor.Value;
+        // Dress the citizen model.
+		Clothing.DressEntity( this );
+
+        // Loop through the clothing items.
+        foreach(var clothing in Children.OfType<ModelEntity>()) {
+            if (clothing.Tags.Has("clothes")) {
+				// Set the color of the clothing items.
+				clothing.RenderColor = clothesColor.Value;
+			}
+        }
+
+        //
+        // Hacky shit below...
+        //
+
+		await Task.Delay( 1000 );
+        if (!this.IsValid())
+			return;
+
+		await Task.Delay( 200 );
+		ClearMaterialOverride();
+        if (!this.IsValid())
+			return;
+
+
+		var SkinMaterial = Clothing.Clothing.Select( x => x.SkinMaterial ).Select( x => Material.Load( x ) ).FirstOrDefault();
+		// var EyesMaterial = Clothing.Clothing.Select( x => x.EyesMaterial ).Select( x => Material.Load( x ) ).FirstOrDefault();
+
+		SetMaterialOverride( SkinMaterial, "skin" );
+
+        //? This line causes some odd wireframing on remote clients.
+		// SetMaterialOverride( EyesMaterial, "eyes" );
+	}
+
+    /// <summary>
+	/// Randomize the clothing wardrobe of this citizen.
+	/// </summary>
     public virtual void UpdateClothes()
     {
         if (Clothing == null) {
@@ -18,6 +87,7 @@ public partial class BaseNpc
 
         //
         // skin
+        //
 		model = Rand.FromArray( new[]
 			{
                 "models/citizen_clothes/skin01.clothing",
@@ -32,6 +102,7 @@ public partial class BaseNpc
 
         //
         // hair
+        //
 		model = Rand.FromArray( new[]
 			{
                 "models/citizen_clothes/hair/hair_balding/hair_baldingbrown.clothing",
@@ -56,6 +127,7 @@ public partial class BaseNpc
 
         //
         // eyebrow
+        //
 		model = Rand.FromArray( new[]
 			{
                 "models/citizen_clothes/hair/eyebrows/eyebrows.clothing",
@@ -68,6 +140,7 @@ public partial class BaseNpc
 
         //
         // facial
+        //
 		model = Rand.FromArray( new[]
 			{
                 "models/citizen_clothes/hair/moustache/moustache_brown.clothing",
@@ -84,6 +157,7 @@ public partial class BaseNpc
 
         //
         // chest
+        //
 		model = Rand.FromArray( new[]
 			{
                 "models/citizen_clothes/shirt/Army_Shirt/army_shirt.clothing",
@@ -105,6 +179,7 @@ public partial class BaseNpc
 
         //
         // trousers
+        //
 		model = Rand.FromArray( new[]
 			{
                 "models/citizen_clothes/trousers/CargoPants/cargo_pants_army.clothing",
@@ -114,42 +189,6 @@ public partial class BaseNpc
         if (ResourceLibrary.TryGet<Clothing>(model, out item)) {
 			Clothing.Clothing.Add( item );
 		}
-	}
-
-    public async void Dress()
-    {
-        // Reduce the chance of skins not working.
-		ClearMaterialOverride();
-
-        if (!this.IsValid())
-			return;
-
-		RenderColor = new Color( .6f, .9f, .6f, 1f );
-
-		Clothing.DressEntity( this );
-
-        foreach(var clothing in Children.OfType<ModelEntity>()) {
-            if (clothing.Tags.Has("clothes")) {
-                // Darken the clothes slightly.
-                clothing.RenderColor = (Color)Color.Parse( "#A3A3A3" );
-            }
-        }
-
-		await Task.Delay( 1000 );
-        if (!this.IsValid())
-			return;
-
-		await Task.Delay( 200 );
-		ClearMaterialOverride();
-        if (!this.IsValid())
-			return;
-
-
-		var SkinMaterial = Clothing.Clothing.Select( x => x.SkinMaterial ).Select( x => Material.Load( x ) ).FirstOrDefault();
-		var EyesMaterial = Clothing.Clothing.Select( x => x.EyesMaterial ).Select( x => Material.Load( x ) ).FirstOrDefault();
-
-		SetMaterialOverride( SkinMaterial, "skin" );
-		SetMaterialOverride( EyesMaterial, "eyes" );
 	}
 
 }
