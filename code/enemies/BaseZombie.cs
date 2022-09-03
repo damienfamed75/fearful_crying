@@ -42,8 +42,12 @@ public partial class BaseZombie : BaseNpc
 	public float WalkSpeed = Rand.Float( 40, 50 );
 	public float RunSpeed = Rand.Float( 150, 170 ); // for reference, the player speed is 300
 	
+	//
+	// Attack information
+	//
 	public float AttackSpeed = 1.0f;
-	public float AttackDamage = 20.0f;
+	public float AttackDamage = 15.0f;
+
 	public static float StepSize = 20f;
     public TimeSince TimeSinceAttacked = 0;
 	public TimeUntil TimeUntilUnstunned = 0;

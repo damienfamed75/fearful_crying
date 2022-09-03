@@ -9,8 +9,9 @@ public partial class FearfulCryingHud : HudEntity<RootPanel>
         if (!IsClient)
 			return;
 
-		RootPanel.StyleSheet.Load( "FearfulCryingHud.scss" );
+		RootPanel.StyleSheet.Load( "/ui/FearfulCryingHud.scss" );
 
 		RootPanel.AddChild<Crosshair>();
+		RootPanel.AddChild<Health>();
 	}
 }
