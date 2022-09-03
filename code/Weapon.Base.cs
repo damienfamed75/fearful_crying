@@ -92,8 +92,6 @@ public partial class Weapon : BaseWeapon, IUse
 		if (ViewModelEntity != null) {
 			ViewModelEntity.SetAnimParameter( "reload", true );
 		}
-
-		//! TODO third person camera model reload.
 	}
 
 	/// <summary>

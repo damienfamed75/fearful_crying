@@ -6,18 +6,18 @@ using SandboxEditor;
 [EditorModel("weapons/rust_pistol/rust_pistol.vmdl")]
 public partial class Pistol : Weapon
 {
-	// shooting information.
+	// Shooting information
 	protected float spread => 0.02f;
 	protected float force => 1.0f;
 	protected float damage => 10.0f;
 	protected float bulletSize => 3.0f;
 
+	// First person viewmodel
 	public override string ViewModelPath => "weapons/rust_pistol/v_rust_pistol.vmdl";
 
 	// Firing rates
 	public override float PrimaryRate => 15f;
 	public override float SecondaryRate => 1f;
-
 	public TimeSince TimeSinceDischarge { get; set; }
 
 	public override void Spawn()
@@ -55,7 +55,8 @@ public partial class Pistol : Weapon
 
 		TimeSinceDischarge = 0;
 
-		var muzzle = GetAttachment( "muzzle" ) ?? default;
+		// Get the muzzle location on the pistol model.
+		var muzzle = GetAttachment( "muzzle" ).GetValueOrDefault();
 		var pos = muzzle.Position;
 		var rot = muzzle.Rotation;
 
@@ -70,8 +71,7 @@ public partial class Pistol : Weapon
 	protected override void OnPhysicsCollision( CollisionEventData eventData )
 	{
 		// If the weapon comes into a collision above a speed, then discharge the weapon.
-		if (eventData.Speed > 500f)
-		{
+		if (eventData.Speed > 500f) {
 			Discharge();
 		}
 	}

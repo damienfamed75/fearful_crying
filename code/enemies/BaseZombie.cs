@@ -211,6 +211,7 @@ public partial class BaseZombie : BaseNpc
             if (Health <= 0) {
 				info.Attacker.Client.AddInt( "kills" );
 			}
-        }
+
+		}
 	}
 }

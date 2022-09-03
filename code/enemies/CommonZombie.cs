@@ -3,7 +3,6 @@ using FearfulCry.Enemies.Nav;
 using System.Linq;
 using System;
 using SandboxEditor;
-using System.Runtime;
 using System.Collections.Generic;
 
 namespace FearfulCry.Enemies;
@@ -189,9 +188,27 @@ public partial class CommonZombie : BaseZombie
 				}
 			}
 		} else {
-			// TODO - turn back to wandering if target is invalid for x time.
+			//! ------------------------------------------------------------
+			//!
+			//!
+			//!
+			//! TODO - turn back to wandering if target is invalid for x time.
+			//!
+			//!
+			//!
+			//! ------------------------------------------------------------
 
 			FindTarget();
+		}
+	}
+
+	public override void TakeDamage( DamageInfo info )
+	{
+		base.TakeDamage( info );
+		// If the zombie is not already chasing and the attacker is a player
+		// then begin to chase them.
+		if (ZombieState != ZombieState.Chase && info.Attacker is Player player) {
+			StartChase( player );
 		}
 	}
 
@@ -237,6 +254,9 @@ public partial class CommonZombie : BaseZombie
 		}
 	}
 
+	/// <summary>
+	/// The raycast to detect whether the zombie melee hits something or not.
+	/// </summary>
 	public virtual IEnumerable<TraceResult> TraceMelee(Vector3 from, Vector3 to, float radius = 2.0f)
 	{
 		var tr = Trace.Ray( from, to )
