@@ -19,6 +19,9 @@ public struct EnemyMoveHelper
 	public float MaxStandableAngle;
 	public Trace Trace;
 
+	private static float minimumFractionOfDistance = 0.03125f; // 1/32
+	// private static float minimumFractionOfDistance = 0.015625f;
+
     /// <summary>
 	/// Create the movehelper and initialize it with the default settings.
 	/// Trace and MaxStandableAngle can be adjusted after creation.
@@ -88,9 +91,10 @@ public struct EnemyMoveHelper
 			var pm = TraceFromTo( Position, Position + Velocity * timeLeft );
 			travelFraction += pm.Fraction;
 
-            //! TODO remove magic number
-			if ( pm.Fraction > 0.03125f ) {
-				Position = pm.EndPosition + pm.Normal * 0.001f;
+			// If the fraction of the amount of traveled distance is more than
+			// the minimum.
+			if ( pm.Fraction > minimumFractionOfDistance ) {
+				Position = pm.EndPosition + pm.Normal * 0.001f; // Move by this much.
 
                 if (pm.Fraction == 1)
 					break;
@@ -227,8 +231,19 @@ public struct EnemyMoveHelper
 			}
 		}
 
-        //!TODO more advanced unstucking.
+		for ( int i = 1; i < 100; i++ ) {
+			var tryPos = Position + Vector3.Random * i;
 
-		return false;
+			var tr = TraceFromTo( tryPos, Position );
+			if (!tr.StartedSolid) {
+				Position = tryPos + tr.Direction.Normal * (tr.Distance - 0.5f);
+				Velocity = 0;
+				return true;
+			}
+		}
+
+			//!TODO more advanced unstucking.
+
+			return false;
 	}
 }

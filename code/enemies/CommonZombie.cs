@@ -4,6 +4,7 @@ using System.Linq;
 using System;
 using SandboxEditor;
 using System.Collections.Generic;
+using System.Runtime;
 
 namespace FearfulCry.Enemies;
 
@@ -31,6 +32,7 @@ public partial class CommonZombie : BaseZombie
 	public bool JustSpawned = true;
 	protected float defaultZombieHealth => 50f;
 	protected float visionRadius => 200f; //! todo - raycast vision.
+	protected float maxVisionRadius => 1200f;
 	protected float alertChance => 0.1f;
 	protected float alertRadius => 800f;
 	protected float attackDistance => 70f;
@@ -76,16 +78,18 @@ public partial class CommonZombie : BaseZombie
 			JustSpawned = false;
 			Log.Info( $"finding new target {target}" );
 		}
+		// 10% of the time, the zombie will be checking for players around them.
+		if (Rand.Int(10) == 1) {
+			// Find player within the sphere of vision.
+			var playerTarget = Entity
+				.FindInSphere( Position, visionRadius )
+				.OfType<Player>()
+				.FirstOrDefault();
 
-		// Find player within the sphere of vision.
-		var playerTarget = Entity
-			.FindInSphere( Position, visionRadius )
-			.OfType<Player>()
-			.FirstOrDefault();
-
-		// If player is valid then chase them.
-		if (playerTarget.IsValid()) {
-			StartChase(playerTarget);
+			// If player is valid then chase them.
+			if (playerTarget.IsValid()) {
+				StartChase(playerTarget);
+			}
 		}
 	}
 
@@ -134,8 +138,15 @@ public partial class CommonZombie : BaseZombie
 	private void Chase()
 	{
 		if (Steer == null) {
-			if (!target.IsValid()) FindTarget();
-			if (target.LifeState == LifeState.Dead) FindTarget();
+			if (!target.IsValid()) {
+				Log.Warning("invalid target and steer");
+				FindTarget();
+			}
+			// if (target.LifeState == LifeState.Dead) FindTarget();
+			if (target.LifeState == LifeState.Dead) {
+				Log.Warning("lifestate => dead");
+				StartWander();
+			}
 			Steer = new NavSteer();
 			Steer.Target = target.Position;
 		}
@@ -145,16 +156,18 @@ public partial class CommonZombie : BaseZombie
 				var distanceToTarget = (Position - Steer.Target).Length;
 
 				if (distanceToTarget < 100) {
-					if (!target.IsValid()) FindTarget();
-					if (target.LifeState == LifeState.Dead) FindTarget();
+					if (target.LifeState == LifeState.Dead)
+						FindTarget();
 
 					Steer.Target = target.Position;
 				} else if (Rand.Int(10) == 1) {
-					if (!target.IsValid()) FindTarget();
-					if (target.LifeState == LifeState.Dead) FindTarget();
+					if (target.LifeState == LifeState.Dead)
+						FindTarget();
 
 					Steer = new NavSteer();
 					Steer.Target = target.Position;
+				} else if (distanceToTarget > maxVisionRadius) {
+					StartWander();
 				}
 
 
@@ -190,15 +203,22 @@ public partial class CommonZombie : BaseZombie
 		} else {
 			//! ------------------------------------------------------------
 			//!
-			//!
-			//!
 			//! TODO - turn back to wandering if target is invalid for x time.
 			//!
-			//!
-			//!
 			//! ------------------------------------------------------------
-
 			FindTarget();
+		}
+		if (target.LifeState == LifeState.Dead) {
+			Log.Warning( "lifestate => dead (indv check)" );
+			StartWander();
+		}
+	}
+
+	public override void HitBreakableObject()
+	{
+		if (TimeSinceAttacked > AttackSpeed) {
+			TimeSinceAttacked = -3;
+			TryMeleeAttack();
 		}
 	}
 

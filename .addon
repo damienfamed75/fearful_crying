@@ -9,7 +9,8 @@
   "ResourcePaths": [
     "/particles/*",
     "/maps/*",
-    "/code/ui/*"
+    "/code/ui/*",
+    "/ui/"
   ],
   "HasCode": true,
   "CodePath": "/code/",

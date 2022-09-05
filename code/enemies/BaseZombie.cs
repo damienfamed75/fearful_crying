@@ -165,12 +165,27 @@ public partial class BaseZombie : BaseNpc
 		}
 
         // if we hit a wall or prop/glass. Then we must jump over or break it.
-        if (GroundEntity != null && move.HitWall) {
-            // TODO
-        }
+        if (GroundEntity != null && move.HitWall && TimeUntilUnstunned < 0) {
+			var jumptr = Trace.Ray( Position + Vector3.Up * 100, EyePosition + Vector3.Up * 40 + Rotation.Forward * 60 )
+				.UseHitboxes()
+				.WithoutTags( "zombie" )
+				.EntitiesOnly()
+				.Ignore( this )
+				.Size( 10 )
+				.Run();
+
+			if (jumptr.Hit) {
+				HitBreakableObject();
+			}
+		}
 
 		Position = move.Position;
 		Velocity = move.Velocity;
+	}
+
+	public virtual void HitBreakableObject()
+	{
+
 	}
 
     public virtual void TryPathOffNav()
