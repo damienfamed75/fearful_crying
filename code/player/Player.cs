@@ -8,10 +8,14 @@ partial class FearfulCryPlayer : Player
 	private TimeSince timeSinceDropped;
 	private TimeSince timeSinceJumpReleased;
 
+	[Net, Predicted]
+	public TimeSince TimeSinceDamage { get; set; }
 	private DamageInfo lastDamage;
 
 	private const Int32 _runSpeed = 300;
 	private const Int32 _walkSpeed = 150;
+
+	public int MaxHealth => 100;
 
 	/// <summary>
 	/// The clothing container is what dresses the citizen.
@@ -77,6 +81,7 @@ partial class FearfulCryPlayer : Player
 
 	public override void TakeDamage( DamageInfo info )
 	{
+		TimeSinceDamage = 0;
 		// If the player was hit in the head (which is HitboxGroup 1)
 		// then double the damage.
 		if (GetHitboxGroup(info.HitboxIndex) == 1) {
