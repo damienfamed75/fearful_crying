@@ -32,20 +32,20 @@ public partial class BaseZombie : BaseNpc
     public float Speed { get; set; }
 	public Entity target;
 
-	NavPath path = new NavPath();
+	// NavPath path = new();
 	public NavSteer Steer;
 
 	public ZombieState ZombieState = ZombieState.Wander;
 	public float WalkSpeed = Rand.Float( 40, 50 );
 	public float RunSpeed = Rand.Float( 150, 170 ); // for reference, the player speed is 300
-	
+	private readonly float StepSize = 20f;
+
 	//
 	// Attack information
 	//
 	public float AttackSpeed = 1.0f;
 	public float AttackDamage = 15.0f;
 
-	public static float StepSize = 20f;
     public TimeSince TimeSinceAttacked = 0;
 	public TimeUntil TimeUntilUnstunned = 0;
 	public TimeSince TimeSinceBurnTicked = 0;
@@ -125,8 +125,10 @@ public partial class BaseZombie : BaseNpc
     {
 		var bbox = BBox.FromHeightAndRadius( 52, 4 );
 
-		EnemyMoveHelper move = new( Position, Velocity );
-		move.MaxStandableAngle = 45f;
+		EnemyMoveHelper move = new( Position, Velocity ) {
+			MaxStandableAngle = 45f
+		};
+
 		move.Trace = move.Trace.Ignore( this ).Size( bbox );
 
         if (!Velocity.IsNearlyZero(0.001f)) {
@@ -150,7 +152,7 @@ public partial class BaseZombie : BaseNpc
 			}
             if (InputVelocity.Length > 0) {
 				var movement = move.Velocity.Dot( InputVelocity.Normal );
-				move.Velocity = move.Velocity - movement * InputVelocity.Normal;
+				move.Velocity -= movement * InputVelocity.Normal;
 				move.ApplyFriction( tr.Surface.Friction * 10.0f, timeDelta );
 				move.Velocity += movement * InputVelocity.Normal;
 			} else {

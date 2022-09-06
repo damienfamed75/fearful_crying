@@ -18,7 +18,7 @@ namespace FearfulCry;
 /// </summary>
 public partial class MyGame : Sandbox.Game
 {
-	StandardPostProcess postProcess;
+	readonly StandardPostProcess postProcess;
 
 	[Net, Change]
 	public int NumClients { get; set; }
@@ -54,7 +54,6 @@ public partial class MyGame : Sandbox.Game
 			postProcess = new StandardPostProcess();
 			PostProcess.Add( postProcess );
 		}
-
 	}
 
 	/// <summary>
@@ -79,7 +78,7 @@ public partial class MyGame : Sandbox.Game
 		if ( randomSpawnPoint != null )
 		{
 			var tx = randomSpawnPoint.Transform;
-			tx.Position = tx.Position + Vector3.Up * 20.0f; // raise it up
+			tx.Position += Vector3.Up * 20.0f; // raise it up
 			pawn.Transform = tx;
 		}
 

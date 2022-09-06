@@ -7,7 +7,7 @@ namespace FearfulCry.Enemies;
 public class NavPath
 {
 	public Vector3 TargetPosition;
-	public List<Vector3> Points = new List<Vector3>();
+	public List<Vector3> Points = new();
 
 	public bool IsEmpty => Points.Count <= 1;
 

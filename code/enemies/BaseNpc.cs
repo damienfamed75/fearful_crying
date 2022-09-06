@@ -11,19 +11,19 @@ public partial class BaseNpc : AnimatedEntity
 {
 	private DamageInfo lastDamage;
     /// <summary>
-	/// criticalHitboxGroup represents where the player can hit this NPC to get
+	/// CriticalHitboxGroup represents where the player can hit this NPC to get
 	/// a critical hit. For instance, for the Citizen model the head is 1.
 	/// </summary>
-	protected int criticalHitboxGroup => 1;
+	protected static int CriticalHitboxGroup => 1;
     /// <summary>
 	/// If a critical hitbox group is hit, then apply this critical hit modifier
 	/// to the incoming damage.
 	/// </summary>
-	protected float criticalHitModifier => 2.0f;
+	protected static float CriticalHitModifier => 2.0f;
 	/// <summary>
 	/// path to the particles used for when this Npc dies from a blast explosion.
 	/// </summary>
-	protected string blastParticles => "particles/impact.flesh-big.vpcf";
+	protected static string BlastParticles => "particles/impact.flesh-big.vpcf";
 
 	public override void Spawn()
     {
@@ -38,8 +38,8 @@ public partial class BaseNpc : AnimatedEntity
 
         // if the critical hitbox group is damaged, then multiply the damage
         // by the critical hit modifier.
-        if (GetHitboxGroup(info.HitboxIndex) == criticalHitboxGroup) {
-			info.Damage *= criticalHitModifier;
+        if (GetHitboxGroup(info.HitboxIndex) == CriticalHitboxGroup ) {
+			info.Damage *= CriticalHitModifier;
 		}
 
         // Procedurally affects the animgraph to twitch according to where this
@@ -57,7 +57,7 @@ public partial class BaseNpc : AnimatedEntity
             // Turn off prediction.
             using (Prediction.Off()) {
 				// Bloody explosion.
-				var particles = Particles.Create( blastParticles );
+				var particles = Particles.Create( BlastParticles );
                 if (particles != null) {
                     //! TODO remove magic number.
 					particles.SetPosition( 0, Position + Vector3.Up * 40 );

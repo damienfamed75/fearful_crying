@@ -7,7 +7,7 @@ namespace FearfulCry.Enemies;
 public partial class BaseNpc
 {
     public ClothingContainer Clothing { get; protected set; }
-	private Color defaultRenderColor => Color.White;
+	private static Color DefaultRenderColor => Color.White;
 
     /// <summary>
 	/// Dress dresses the entity with what's inside the clothing container.
@@ -24,10 +24,10 @@ public partial class BaseNpc
     {   
         // If either color params are default or invalid then override with default white.
         if (renderingColor.GetValueOrDefault().Equals(default)) {
-			renderingColor = defaultRenderColor;
+			renderingColor = DefaultRenderColor;
 		}
         if (clothesColor.GetValueOrDefault().Equals(default)) {
-			clothesColor = defaultRenderColor;
+			clothesColor = DefaultRenderColor;
 		}
 
         // Reduce the chance of skins not working.

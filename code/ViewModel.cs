@@ -4,11 +4,11 @@
 public class ViewModel : BaseViewModel
 {
 	// variables that alter how much swing and bobbing there is on this item.
-	protected float SwingInfluence => 0.05f;
-	protected float ReturnSpeed => 5.0f;
-	protected float MaxOffsetLength => 10.0f;
-	protected float BobCycleTime => 7.0f;
-	protected Vector3 BobDirection => new Vector3( 0.0f, 1.0f, 0.5f );
+	protected static float SwingInfluence => 0.05f;
+	protected static float ReturnSpeed => 5.0f;
+	protected static float MaxOffsetLength => 10.0f;
+	protected static float BobCycleTime => 7.0f;
+	protected static Vector3 BobDirection => new( 0.0f, 1.0f, 0.5f );
 
 	// variables used for calculating the amount of swing and bobbing.
 	private Vector3 swingOffset;
@@ -55,7 +55,7 @@ public class ViewModel : BaseViewModel
 		var cameraBoneIndex = GetBoneIndex( "camera" );
 		if ( cameraBoneIndex != -1 )
 		{
-			camSetup.Rotation *= (Rotation.Inverse * GetBoneTransform( cameraBoneIndex ).Rotation);
+			camSetup.Rotation *= Rotation.Inverse * GetBoneTransform( cameraBoneIndex ).Rotation;
 		}
 
 		var newPitch = Rotation.Pitch();
@@ -100,7 +100,7 @@ public class ViewModel : BaseViewModel
 
 		var verticalDelta = playerVelocity.z * Time.Delta;
 		var viewDown = Rotation.FromPitch( newPitch ).Up * -1.0f;
-		verticalDelta *= (1.0f - System.MathF.Abs( viewDown.Cross( Vector3.Down ).y ));
+		verticalDelta *= 1.0f - System.MathF.Abs( viewDown.Cross( Vector3.Down ).y );
 		var pitchDelta = PitchInertia - verticalDelta * 1;
 		var yawDelta = YawInertia;
 
@@ -119,7 +119,7 @@ public class ViewModel : BaseViewModel
 	/// <returns>an offset vector3 to be multiplied to a rotation and added to the position of the weapon</returns>
 	protected Vector3 CalcSwingOffset( float pitchDelta, float yawDelta )
 	{
-		Vector3 swingVelocity = new Vector3( 0, yawDelta, pitchDelta );
+		Vector3 swingVelocity = new( 0, yawDelta, pitchDelta );
 
 		swingOffset -= swingOffset * ReturnSpeed * Time.Delta;
 		swingOffset += (swingVelocity * SwingInfluence);

@@ -23,8 +23,8 @@ public partial class Weapon : BaseWeapon, IUse
 		{
 			tr.Surface.DoBulletImpact( tr );
 
-			if ( !IsServer ) continue;
-			if ( !tr.Entity.IsValid() ) continue;
+			if ( !tr.Entity.IsValid() || !IsServer )
+				continue;
 
 			// Turn prediction off so any exploding effects don't get culled.
 			using ( Prediction.Off() )

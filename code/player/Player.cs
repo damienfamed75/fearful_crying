@@ -12,10 +12,7 @@ partial class FearfulCryPlayer : Player
 	public TimeSince TimeSinceDamage { get; set; }
 	private DamageInfo lastDamage;
 
-	private const Int32 _runSpeed = 300;
-	private const Int32 _walkSpeed = 150;
-
-	public int MaxHealth => 100;
+	public static int MaxHealth => 100;
 
 	/// <summary>
 	/// The clothing container is what dresses the citizen.
@@ -209,7 +206,7 @@ partial class FearfulCryPlayer : Player
 		// Lock animation facing wihtin 45 degrees of rotation true to the player's eye rotation.
 		Rotation = Rotation.Clamp( iRot, 45.0f, out var shuffle );
 
-		CitizenAnimationHelper animHelper = new CitizenAnimationHelper( this );
+		CitizenAnimationHelper animHelper = new( this );
 
 		animHelper.WithWishVelocity( controller.WishVelocity );
 		animHelper.WithVelocity( controller.Velocity );

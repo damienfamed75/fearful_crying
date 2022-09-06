@@ -10,8 +10,10 @@
     "/particles/*",
     "/maps/*",
     "/code/ui/*",
-    "/ui/",
-    "/sounds/"
+    "/ui/*",
+    "/sounds/*",
+    "/models/*",
+    "/maps/prefabs/*"
   ],
   "HasCode": true,
   "CodePath": "/code/",

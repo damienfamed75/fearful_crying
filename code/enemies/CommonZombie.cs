@@ -29,18 +29,18 @@ public partial class CommonZombie : BaseZombie
 	}
 
 	public bool JustSpawned = true;
-	protected float defaultZombieHealth => 50f;
-	protected float visionRadius => 200f; //! todo - raycast vision.
-	protected float maxVisionRadius => 1200f;
-	protected float alertChance => 0.1f;
-	protected float alertRadius => 800f;
-	protected float attackDistance => 70f;
+	protected static float DefaultZombieHealth => 50f;
+	protected static float VisionRadius => 200f; //! todo - raycast vision.
+	protected static float MaxVisionRadius => 1200f;
+	protected static float AlertChance => 0.1f;
+	protected static float AlertRadius => 800f;
+	protected static float AttackDistance => 70f;
 
 	public override void Spawn()
 	{
 		base.Spawn();
 		// Set default health to this common zombie.
-		Health = defaultZombieHealth;
+		Health = DefaultZombieHealth;
 		// Wander default
 		StartWander();
 	}
@@ -64,9 +64,11 @@ public partial class CommonZombie : BaseZombie
 		ZombieState = ZombieState.Wander;
 		Speed = WalkSpeed;
 
-		var wander = new Nav.Wander();
-		wander.MinRadius = 150;
-		wander.MaxRadius = 300;
+		var wander = new Nav.Wander {
+			MinRadius = 150,
+			MaxRadius = 300
+		};
+
 		Steer = wander;
 	}
 
@@ -81,7 +83,7 @@ public partial class CommonZombie : BaseZombie
 		if (Rand.Int(10) == 1) {
 			// Find player within the sphere of vision.
 			var playerTarget = Entity
-				.FindInSphere( Position, visionRadius )
+				.FindInSphere( Position, VisionRadius )
 				.OfType<Player>()
 				.FirstOrDefault();
 
@@ -127,11 +129,12 @@ public partial class CommonZombie : BaseZombie
 		ZombieState = ZombieState.Chase;
 		Speed = RunSpeed;
 
-		Steer = new NavSteer();
-		Steer.Target = target.Position;
+		Steer = new NavSteer {
+			Target = target.Position
+		};
 
 		// Try to alert nearby enemies.
-		TryAlertNearby(target, alertChance, alertRadius);
+		TryAlertNearby(target, AlertChance, AlertRadius );
 	}
 
 	private void Chase()
@@ -146,8 +149,9 @@ public partial class CommonZombie : BaseZombie
 				Log.Warning("lifestate => dead");
 				StartWander();
 			}
-			Steer = new NavSteer();
-			Steer.Target = target.Position;
+			Steer = new NavSteer {
+				Target = target.Position
+			};
 		}
 		if (target.IsValid()) {
 			// Don't do anything while stunned.
@@ -163,9 +167,10 @@ public partial class CommonZombie : BaseZombie
 					if (target.LifeState == LifeState.Dead)
 						FindTarget();
 
-					Steer = new NavSteer();
-					Steer.Target = target.Position;
-				} else if (distanceToTarget > maxVisionRadius) {
+					Steer = new NavSteer {
+						Target = target.Position
+					};
+				} else if (distanceToTarget > MaxVisionRadius ) {
 					StartWander();
 				}
 
@@ -255,10 +260,10 @@ public partial class CommonZombie : BaseZombie
 		forward += (Vector3.Random + Vector3.Random + Vector3.Random) * .1f;
 		forward = forward.Normal;
 
-		foreach (var tr in TraceMelee(EyePosition, EyePosition+forward * attackDistance, 50)) {
+		foreach (var tr in TraceMelee(EyePosition, EyePosition+forward * AttackDistance, 50)) {
 			// Create a bullet impact where the attack was made.
 			tr.Surface.DoBulletImpact( tr );
-			Log.Info($"Impact {tr.Surface.ToString()}");
+			Log.Info($"Impact {tr.Surface}");
 			tr.Entity.ApplyLocalImpulse( forward * 20 );
 
 			if (!IsServer || !tr.Entity.IsValid)

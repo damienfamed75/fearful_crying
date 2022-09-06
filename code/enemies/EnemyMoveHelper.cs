@@ -19,7 +19,7 @@ public struct EnemyMoveHelper
 	public float MaxStandableAngle;
 	public Trace Trace;
 
-	private static float minimumFractionOfDistance = 0.03125f; // 1/32
+	private static readonly float minimumFractionOfDistance = 0.03125f; // 1/32
 	// private static float minimumFractionOfDistance = 0.015625f;
 
     /// <summary>

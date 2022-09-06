@@ -5,11 +5,11 @@ namespace FearfulCry.Enemies;
 public partial class BaseNpc
 {
     // Maximum total number of ragdolls.
-	static EntityLimit RagdollLimit = new EntityLimit { MaxTotal = 25 };
+	static readonly EntityLimit RagdollLimit = new(){ MaxTotal = 25 };
 
-	private float secondsToDelete => 20.0f;
+	private static float SecondsToDelete => 20.0f;
 
-	private float ragdollForce => 1000.0f;
+	private static float RagdollForce => 1000.0f;
 
 	/// <summary>
 	/// Turns the entity into a ragdoll and applies force. The more force
@@ -20,19 +20,19 @@ public partial class BaseNpc
 	[ClientRpc]
     protected void BecomeRagdollOnClient(Vector3 force, int forceBone)
     {
-        // This is a lot like the player ragdoll.
-		var ent = new ModelEntity();
+		// This is a lot like the player ragdoll.
+		var ent = new ModelEntity {
+			Position = Position,
+			Rotation = Rotation,
+			PhysicsEnabled = true,
+			UsePhysicsCollision = true
+		};
 
-		ent.Position = Position;
-		ent.Rotation = Rotation;
-		ent.PhysicsEnabled = true;
-		ent.UsePhysicsCollision = true;
 		ent.Tags.Add( "ragdoll", "gib", "debris" );
-
 		ent.CopyFrom( this );
 		ent.CopyBonesFrom( this );
 		ent.SetRagdollVelocityFrom( this );
-		ent.DeleteAsync(secondsToDelete);
+		ent.DeleteAsync( SecondsToDelete );
         ent.RenderColor = RenderColor;
 
         // Copy the clothes over
@@ -55,7 +55,7 @@ public partial class BaseNpc
 			var body = ent.GetBonePhysicsBody( forceBone );
             if (body != null) {
                 //! TODO remove magic number
-				body.ApplyForce( force * ragdollForce );
+				body.ApplyForce( force * RagdollForce );
 			} else {
 				ent.PhysicsGroup.AddVelocity( force );
 			}

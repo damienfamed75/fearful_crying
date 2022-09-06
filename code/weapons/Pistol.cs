@@ -7,17 +7,17 @@ using SandboxEditor;
 public partial class Pistol : AmmoWeapon
 {
 	// Shooting information
-	protected float spread => 0.02f;
-	protected float force => 1.0f;
-	protected float damage => 10.0f;
-	protected float bulletSize => 3.0f;
+	protected static float Spread => 0.02f;
+	protected static float Force => 1.0f;
+	protected static float BulletDamage => 10.0f;
+	protected static float BulletSize => 3.0f;
 
 	// First person viewmodel
 	public override string ViewModelPath => "weapons/rust_pistol/v_rust_pistol.vmdl";
 
 	// Sounds
-	private string DryFireSound => "revolver-dryfire";
-	private string FireSound => "rust_pistol.shoot";
+	private static string DryFireSound => "revolver-dryfire";
+	private static string FireSound => "rust_pistol.shoot";
 
 	// Firing rates
 	public override float PrimaryRate => 5f;
@@ -60,7 +60,7 @@ public partial class Pistol : AmmoWeapon
 
 		ShootEffects();
 		PlaySound( FireSound );
-		ShootBullet( spread, force, damage, bulletSize );
+		ShootBullet( Spread, Force, BulletDamage, BulletSize );
 	}
 
 	/// <summary>
@@ -80,8 +80,8 @@ public partial class Pistol : AmmoWeapon
 		var rot = muzzle.Rotation;
 
 		ShootEffects();
-		PlaySound(FireSound);
-		ShootBullet( pos, rot.Forward, spread, force, damage, bulletSize );
+		PlaySound( FireSound );
+		ShootBullet( pos, rot.Forward, Spread, Force, BulletDamage, BulletSize );
 
 		// Apply impulse backward on the weapon.
 		ApplyAbsoluteImpulse( rot.Backward * 200f );

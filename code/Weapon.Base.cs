@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public partial class Weapon : BaseWeapon, IUse
 {
 	// the amount of time before you can use this weapon after deploying it.
-	protected float _deployTime => 0.6f;
+	public virtual float DeployTime => 0.6f;
 	// the amount of time it takes to reload the weapon.
 	public virtual float ReloadTime => 3.0f;
 	// The pickup trigger volume for this weapon.
@@ -62,7 +62,7 @@ public partial class Weapon : BaseWeapon, IUse
 	/// </summary>
 	public override void Simulate( Client player )
 	{
-		if ( TimeSinceDeployed < _deployTime )
+		if ( TimeSinceDeployed < DeployTime )
 			return;
 
 		if (!IsReloading ) {
