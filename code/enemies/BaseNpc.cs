@@ -29,6 +29,7 @@ public partial class BaseNpc : AnimatedEntity
     {
 		base.Spawn();
 		Tags.Add( "npc" );
+		EnableLagCompensation = true;
 	}
 
 	public override void TakeDamage( DamageInfo info )

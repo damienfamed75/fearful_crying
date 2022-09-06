@@ -64,13 +64,13 @@ public class NavSteer
         foreach (var ent in Entity.FindInSphere(center, radius)) {
             if (ent is not BaseNpc && ent is not Player)
                 continue;
-            
+
             if (ent.IsWorld)
 				continue;
 
 			var delta = position - ent.Position;
 			var dist = delta.Length;
-            
+
             if (dist < 0.001f) //! TODO remove magic number
 				continue;
 

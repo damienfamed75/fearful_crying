@@ -126,7 +126,7 @@ public partial class BaseZombie : BaseNpc
 		var bbox = BBox.FromHeightAndRadius( 52, 4 );
 
 		EnemyMoveHelper move = new( Position, Velocity ) {
-			MaxStandableAngle = 45f
+			MaxStandableAngle = 50f
 		};
 
 		move.Trace = move.Trace.Ignore( this ).Size( bbox );

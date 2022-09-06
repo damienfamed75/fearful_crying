@@ -200,7 +200,7 @@ public partial class CommonZombie : BaseZombie
 						// TryMeleeAttack();
 						TimeSinceAttacked = -3;
 						TryMeleeAttack();
-						MeleeAttack();
+						// MeleeAttack();
 					}
 				}
 			}
@@ -222,7 +222,12 @@ public partial class CommonZombie : BaseZombie
 	{
 		if (TimeSinceAttacked > AttackSpeed) {
 			TimeSinceAttacked = -3;
-			TryMeleeAttack();
+			Log.Info( "try hit breakable object" );
+			// TryMeleeAttack();
+			PlaySoundOnClient( "rust_flashlight.attack" );
+			SetAnimParameter( "b_attack", true );
+			MeleeAttack();
+			Velocity *= .1f;
 		}
 	}
 
@@ -241,8 +246,9 @@ public partial class CommonZombie : BaseZombie
 		if (TimeUntilUnstunned > 0)
 			return;
 
-		// PlaySoundOnClient( "sounds/weapons/extra-gunshot-a.vsnd_c" );
+		PlaySoundOnClient( "rust_flashlight.attack" );
 		SetAnimParameter( "b_attack", true );
+		MeleeAttack();
 		Velocity *= .1f;
 	}
 

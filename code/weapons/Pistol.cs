@@ -20,7 +20,7 @@ public partial class Pistol : AmmoWeapon
 	private static string FireSound => "rust_pistol.shoot";
 
 	// Firing rates
-	public override float PrimaryRate => 5f;
+	public override float PrimaryRate => 6.5f;
 	public override float SecondaryRate => 1f;
 	public TimeSince TimeSinceDischarge { get; set; }
 
