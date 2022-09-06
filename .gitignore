@@ -1,0 +1,10 @@
+.codegen
+obj
+*.csproj
+launchSettings.json
+*.xml
+*.dll
+*.pdb
+.vs/*
+*.generated.*
+.suo
