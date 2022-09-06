@@ -1,5 +1,0 @@
-make zombies agro when shot
-
-make zombies wander over distance/time/deaths
-
-make health packs to heal (maybe swp health pack to heal others like Sven Co-Op)
