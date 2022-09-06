@@ -1,4 +1,3 @@
-using System;
 using Sandbox;
 
 public partial class AmmoWeapon : Weapon
