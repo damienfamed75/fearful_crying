@@ -2,10 +2,6 @@ using Sandbox;
 
 public partial class AmmoWeapon : Weapon
 {
-    //
-    // Ammunition.
-    //
-
     /// <summary>
 	/// MagSize represents the maximum clip/magazine size.
 	/// </summary>
@@ -23,8 +19,6 @@ public partial class AmmoWeapon : Weapon
 	/// </summary>
     [Net, Predicted]
 	public int TotalBulletCount { get; set; }
-
-	public virtual string DryFireSound => null;
 
 	/// <summary>
 	/// Does this weapon have ammo?

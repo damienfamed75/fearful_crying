@@ -16,7 +16,7 @@ public partial class Pistol : AmmoWeapon
 	public override string ViewModelPath => "weapons/rust_pistol/v_rust_pistol.vmdl";
 
 	// Sounds
-	public override string DryFireSound => "revolver-dryfire";
+	private string DryFireSound => "revolver-dryfire";
 	private string FireSound => "rust_pistol.shoot";
 
 	// Firing rates
