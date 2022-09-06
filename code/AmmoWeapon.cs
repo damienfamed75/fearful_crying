@@ -23,8 +23,7 @@ public partial class AmmoWeapon : Weapon
 	/// <summary>
 	/// Does this weapon have ammo?
 	/// </summary>
-	/// <returns>Whether this weapon has ammo or not</returns>
-	public bool HasAmmo() => CurrentBulletCount != 0;
+	public bool HasAmmo => CurrentBulletCount != 0;
 
     /// <summary>
 	/// Subtracts the ammo from the current clip.

@@ -43,7 +43,7 @@ public partial class Pistol : AmmoWeapon
 	public override void AttackPrimary()
 	{
 		// If there's no ammo left in the magazine, then play blind fire sound.
-		if (!HasAmmo()) {
+		if (!HasAmmo) {
 			PlaySound( DryFireSound );
 			return;
 		}
@@ -69,7 +69,7 @@ public partial class Pistol : AmmoWeapon
 	/// </summary>
 	private void Discharge()
 	{
-		if (!HasAmmo())
+		if (!HasAmmo)
 			return;
 
 		TimeSinceDischarge = 0;
