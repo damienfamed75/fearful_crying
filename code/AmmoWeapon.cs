@@ -1,3 +1,4 @@
+using System;
 using Sandbox;
 
 public partial class AmmoWeapon : Weapon
@@ -39,20 +40,17 @@ public partial class AmmoWeapon : Weapon
 		if (TotalBulletCount == 0)
 			return;
 
-		// Don't reload if there's nothing to reload.
+		// Don't reload if current magazine is already full.
 		if (CurrentBulletCount == MagSize)
 			return;
 
-		var oldCurrent = CurrentBulletCount;
-		var diff = MagSize - oldCurrent;
-        
-        if (TotalBulletCount > diff) {
-			TotalBulletCount -= diff;
-			CurrentBulletCount = MagSize;
-		} else {
-			CurrentBulletCount += TotalBulletCount;
-			TotalBulletCount = 0;
-		}
+		// Get the new current bullet count.
+		var newCurrent = TotalBulletCount + CurrentBulletCount;
+		// Subtract from the total ammo.
+		TotalBulletCount -= MagSize - CurrentBulletCount;
+		// If the new current is larger than the magazine size, then use the
+		// magazine size instead.
+		CurrentBulletCount = newCurrent > MagSize ? MagSize : newCurrent;
 
         base.Reload();
     }
