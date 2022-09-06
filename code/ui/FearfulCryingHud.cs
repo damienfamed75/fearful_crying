@@ -1,9 +1,10 @@
+using System.Linq;
 using Sandbox;
 using Sandbox.UI;
 
 public partial class FearfulCryingHud : HudEntity<RootPanel>
 {
-    public FearfulCryingHud()
+	public FearfulCryingHud()
     {
         // Only call when client.
         if (!IsClient)
@@ -13,5 +14,6 @@ public partial class FearfulCryingHud : HudEntity<RootPanel>
 
 		RootPanel.AddChild<Crosshair>();
 		RootPanel.AddChild<Health>();
+		RootPanel.AddChild<Ammo>();
 	}
 }

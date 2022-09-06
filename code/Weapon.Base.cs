@@ -70,7 +70,7 @@ public partial class Weapon : BaseWeapon, IUse
 			base.Simulate( player );
 		}
 
-		if (IsReloading && TimeSinceDeployed > ReloadTime) {
+		if (IsReloading && TimeSinceReload > ReloadTime) {
 			OnReloadFinish();
 		}
 	}

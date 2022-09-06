@@ -4,7 +4,7 @@ using SandboxEditor;
 [Library("weapon_pistol"), HammerEntity]
 [Title("Pistol"), Category("Weapon"), Icon("place")]
 [EditorModel("weapons/rust_pistol/rust_pistol.vmdl")]
-public partial class Pistol : Weapon
+public partial class Pistol : AmmoWeapon
 {
 	// Shooting information
 	protected float spread => 0.02f;
@@ -15,8 +15,12 @@ public partial class Pistol : Weapon
 	// First person viewmodel
 	public override string ViewModelPath => "weapons/rust_pistol/v_rust_pistol.vmdl";
 
+	// Sounds
+	public override string DryFireSound => "revolver-dryfire";
+	private string FireSound => "rust_pistol.shoot";
+
 	// Firing rates
-	public override float PrimaryRate => 15f;
+	public override float PrimaryRate => 5f;
 	public override float SecondaryRate => 1f;
 	public TimeSince TimeSinceDischarge { get; set; }
 
@@ -24,16 +28,27 @@ public partial class Pistol : Weapon
 	{
 		base.Spawn();
 
+		MagSize = 13;
+		TotalBulletCount = 54;
+		CurrentBulletCount = MagSize;
+
 		SetModel( "weapons/rust_pistol/rust_pistol.vmdl" );
 	}
 
 	public override bool CanPrimaryAttack()
 	{
-		return base.CanPrimaryAttack() && Input.Pressed(InputButton.PrimaryAttack);
+		return base.CanPrimaryAttack() && Input.Pressed( InputButton.PrimaryAttack );
 	}
 
 	public override void AttackPrimary()
 	{
+		// If there's no ammo left in the magazine, then play blind fire sound.
+		if (!HasAmmo()) {
+			PlaySound( DryFireSound );
+			return;
+		}
+		base.AttackPrimary();
+
 		// reset time since attack
 		TimeSincePrimaryAttack = 0;
 		TimeSinceSecondaryAttack = 0;
@@ -44,13 +59,17 @@ public partial class Pistol : Weapon
 		}
 
 		ShootEffects();
-		PlaySound( "rust_pistol.shoot" );
+		PlaySound( FireSound );
 		ShootBullet( spread, force, damage, bulletSize );
 	}
 
+	/// <summary>
+	/// Discharge is used for when this weapon is a physics object and encounters
+	/// a force great enough to discharge it.
+	/// </summary>
 	private void Discharge()
 	{
-		if ( TimeSinceDischarge < 0.5f)
+		if (!HasAmmo())
 			return;
 
 		TimeSinceDischarge = 0;
@@ -61,15 +80,24 @@ public partial class Pistol : Weapon
 		var rot = muzzle.Rotation;
 
 		ShootEffects();
-		PlaySound("rust_pistol.shoot");
+		PlaySound(FireSound);
 		ShootBullet( pos, rot.Forward, spread, force, damage, bulletSize );
 
 		// Apply impulse backward on the weapon.
 		ApplyAbsoluteImpulse( rot.Backward * 200f );
 	}
 
+	/// <summary>
+	/// Used for discharging the weapon when there's a great enough force.
+	/// </summary>
 	protected override void OnPhysicsCollision( CollisionEventData eventData )
 	{
+		// If colliding with a player then ignore this.
+		// This is it to prevent the weapon from discharging immediately out
+		// of the hands of the player.
+		if (eventData.Other.Entity is Player)
+			return;
+
 		// If the weapon comes into a collision above a speed, then discharge the weapon.
 		if (eventData.Speed > 500f) {
 			Discharge();

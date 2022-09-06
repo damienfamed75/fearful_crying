@@ -15,6 +15,23 @@ Health
     background-color: rgba(#333, 0.5);
 }
 
+Ammo
+{
+    position: absolute;
+    left: 100px;
+    bottom: 50px;
+    font-size: 40px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    align-items: center;
+
+    height: 80px;
+    color: #bf250f;
+    padding: 0 20px;
+    border-radius: 10px;
+    background-color: rgba(#333, 0.5);
+}
+
 rootpanel
 {
     background-color: rgba( #333, 0);
