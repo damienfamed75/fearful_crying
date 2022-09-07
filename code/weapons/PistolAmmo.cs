@@ -3,7 +3,7 @@ using Sandbox;
 using SandboxEditor;
 
 [Library("ammo_pistol"), HammerEntity]
-[Title("Pistol Ammo"), Category("Ammo")]
+[Title("Pistol Ammo"), Category("Ammo"), Icon("list")]
 [EditorModel("models/rust_props/small_junk/tea_box.vmdl")]
 public class PistolAmmo : Ammunition
 {

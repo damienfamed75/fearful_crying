@@ -12,7 +12,7 @@ partial class FearfulCryPlayer : Player
 	public TimeSince TimeSinceDamage { get; set; }
 	private DamageInfo lastDamage;
 
-	public static int MaxHealth => 100;
+	public int MaxHealth { get; protected set; } = 100;
 
 	/// <summary>
 	/// The clothing container is what dresses the citizen.

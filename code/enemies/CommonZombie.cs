@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace FearfulCry.Enemies;
 
 [Library("enemy_commonzombie"), HammerEntity]
-[Title("CommonZombie"), Category("Enemy")]
+[Title("CommonZombie"), Category("Enemy"), Description("A common zombie")]
 [EditorModel("models/citizen/citizen.vmdl")]
 public partial class CommonZombie : BaseZombie
 {

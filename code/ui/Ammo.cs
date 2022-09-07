@@ -20,7 +20,7 @@ public class Ammo : Panel
 		if ( (player as Player).ActiveChild is AmmoWeapon aw ) {
 			Style.Opacity = 1f;
 			Style.BackgroundColor = Color.Parse("#333").Value.WithAlpha(.5f);
-			Label.Text = $"{aw.CurrentBulletCount}/{aw.TotalBulletCount}";
+			Label.Text = $"🔥 {aw.CurrentBulletCount} / {aw.TotalBulletCount}";
 		} else {
 			Style.Opacity = 0f;
 		}

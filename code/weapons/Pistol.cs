@@ -2,7 +2,7 @@
 using SandboxEditor;
 
 [Library("weapon_pistol"), HammerEntity]
-[Title("Pistol"), Category("Weapon"), Icon("place")]
+[Title("Pistol"), Category("Weapon"), Icon("local_fire_department")]
 [EditorModel("weapons/rust_pistol/rust_pistol.vmdl")]
 public partial class Pistol : AmmoWeapon
 {

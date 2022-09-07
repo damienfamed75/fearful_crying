@@ -13,9 +13,6 @@ public enum ZombieState
     Chase,
 }
 
-[Library("enemy_basezombie"), HammerEntity]
-[Title("BaseZombie"), Category("Enemy")]
-[EditorModel("models/citizen/citizen.vmdl")]
 public partial class BaseZombie : BaseNpc
 {
     [ConVar.Replicated]
