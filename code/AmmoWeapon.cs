@@ -1,3 +1,4 @@
+using System;
 using Sandbox;
 
 public partial class AmmoWeapon : Weapon
@@ -46,7 +47,7 @@ public partial class AmmoWeapon : Weapon
 		// Get the new current bullet count.
 		var newCurrent = TotalBulletCount + CurrentBulletCount;
 		// Subtract from the total ammo.
-		TotalBulletCount -= MagSize - CurrentBulletCount;
+		TotalBulletCount -= (MagSize - CurrentBulletCount).Clamp(0, TotalBulletCount);
 		// If the new current is larger than the magazine size, then use the
 		// magazine size instead.
 		CurrentBulletCount = newCurrent > MagSize ? MagSize : newCurrent;
