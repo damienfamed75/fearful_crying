@@ -222,9 +222,9 @@ public partial class CommonZombie : BaseZombie
 	{
 		if (TimeSinceAttacked > AttackSpeed) {
 			TimeSinceAttacked = -3;
-			Log.Info( "try hit breakable object" );
+			// Log.Info( "try hit breakable object" );
 			// TryMeleeAttack();
-			PlaySoundOnClient( "rust_flashlight.attack" );
+			// PlaySoundOnClient( "rust_flashlight.attack" );
 			SetAnimParameter( "b_attack", true );
 			MeleeAttack();
 			Velocity *= .1f;
