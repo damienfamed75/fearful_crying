@@ -17,7 +17,7 @@ public partial class AmmoWeapon : Weapon
     /// <summary>
 	/// Total number of bullets that the weapon has.
 	/// </summary>
-    [Net, Predicted]
+    [Net]
 	public int TotalBulletCount { get; set; }
 
 	/// <summary>

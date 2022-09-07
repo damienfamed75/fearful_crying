@@ -29,7 +29,7 @@ public partial class Pistol : AmmoWeapon
 		base.Spawn();
 
 		MagSize = 13;
-		TotalBulletCount = 54;
+		TotalBulletCount = MagSize;
 		CurrentBulletCount = MagSize;
 
 		SetModel( "weapons/rust_pistol/rust_pistol.vmdl" );
