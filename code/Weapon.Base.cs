@@ -81,6 +81,15 @@ public partial class Weapon : BaseWeapon, IUse
 	public virtual void OnReloadFinish()
 	{
 		IsReloading = false;
+		FinishReloadEffects();
+	}
+
+	[ClientRpc]
+	public virtual void FinishReloadEffects()
+	{
+		if (ViewModelEntity != null) {
+			ViewModelEntity.SetAnimParameter( "reload_finished", true );
+		}
 	}
 
 	/// <summary>

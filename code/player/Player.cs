@@ -120,7 +120,8 @@ partial class FearfulCryPlayer : Player
 		//
 		// Inventory
 		//
-		Inventory.Add( new Pistol(), true);
+		Inventory.Add( new PumpShotgun(), true);
+		Inventory.Add( new Pistol());
 
 		CameraMode = new FirstPersonCamera();
 
@@ -162,6 +163,8 @@ partial class FearfulCryPlayer : Player
 				dropped.PhysicsGroup.ApplyImpulse( Velocity + EyeRotation.Forward * 500f + Vector3.Up * 100f, true );
 				// Apply random rotational force.
 				dropped.PhysicsGroup.ApplyAngularImpulse( Vector3.Random * 100f, true );
+				// Throw the item facing sideways.
+				dropped.Rotation = Rotation.FromYaw( 90f ) * EyeRotation;
 
 				timeSinceDropped = 0;
 			}

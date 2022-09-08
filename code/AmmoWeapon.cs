@@ -1,5 +1,6 @@
 using System;
 using Sandbox;
+using Sandbox.UI;
 
 public partial class AmmoWeapon : Weapon
 {
@@ -31,10 +32,30 @@ public partial class AmmoWeapon : Weapon
 	/// </summary>
 	public override void AttackPrimary() => CurrentBulletCount--;
 
-    /// <summary>
+	/// <summary>
+	/// Whether this weapon reloads one bullet at a time.
+	/// For example a pump action shotgun would be a single bullet reloading weapon.
+	/// </summary>
+	public virtual bool SingleBulletReloading => false;
+
+	/// <summary>
+	/// SingleBulletReloadTime should be EQUAL OR UNDER ReloadTime.
+	/// 
+	/// This represents the amount of time to load a single bullet.
+	/// </summary>
+	public virtual float SingleBulletReloadTime => 0.6f;
+
+	/// <summary>
+	/// The amount of time since a single bullet was loaded.
+	/// Used for SingleBulletReloading weapons.
+	/// </summary>
+	[Net, Predicted]
+	protected TimeSince TimeSinceReloadSingleBullet { get; set; }
+
+	/// <summary>
 	/// Handles reloading ammunition numbers and that's about it.
 	/// </summary>
-    public override void Reload()
+	public override void Reload()
     {
 		// If there's no more ammo left, then don't reload.
 		if (TotalBulletCount == 0)
@@ -44,14 +65,54 @@ public partial class AmmoWeapon : Weapon
 		if (CurrentBulletCount == MagSize)
 			return;
 
-		// Get the new current bullet count.
-		var newCurrent = TotalBulletCount + CurrentBulletCount;
-		// Subtract from the total ammo.
-		TotalBulletCount -= (MagSize - CurrentBulletCount).Clamp(0, TotalBulletCount);
-		// If the new current is larger than the magazine size, then use the
-		// magazine size instead.
-		CurrentBulletCount = newCurrent > MagSize ? MagSize : newCurrent;
+		if (SingleBulletReloading) {
+			SingleBulletReload();
+		} else {
+			// Get the new current bullet count.
+			var newCurrent = TotalBulletCount + CurrentBulletCount;
+			// Subtract from the total ammo.
+			TotalBulletCount -= (MagSize - CurrentBulletCount).Clamp(0, TotalBulletCount);
+			// If the new current is larger than the magazine size, then use the
+			// magazine size instead.
+			CurrentBulletCount = newCurrent > MagSize ? MagSize : newCurrent;
+		}
+
 
         base.Reload();
     }
+
+	/// <summary>
+	/// Handles reloading a single bullet at a time.
+	/// </summary>
+	private void SingleBulletReload()
+	{
+		// If there's no ammo to reload then return.
+		if (TotalBulletCount <= 0)
+			return;
+		// If the current magazine is already full.
+		if (CurrentBulletCount >= MagSize)
+			return;
+
+		// Reset the reload times.
+		TimeSinceReload = 0;
+		TimeSinceReloadSingleBullet = 0;
+
+		// Reload the single bullet.
+		CurrentBulletCount++;
+		TotalBulletCount--;
+
+		// Plays the reload animation again (animgraph handles replays)
+		StartReloadEffects();
+	}
+
+	public override void Simulate( Client player )
+	{
+		if (IsReloading && SingleBulletReloading && (TimeSinceReloadSingleBullet > SingleBulletReloadTime)) {
+			SingleBulletReload();
+		}
+
+		// Call after checking for single reloads because they should be treated
+		// at a higher priority.
+		base.Simulate(player);
+	}
 }
