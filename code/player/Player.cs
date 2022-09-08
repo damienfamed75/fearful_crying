@@ -148,7 +148,7 @@ partial class FearfulCryPlayer : Player
 		var controller = GetActiveController();
 		if (controller != null) {
 			EnableSolidCollisions = !controller.HasTag( "noclip" );
-			
+
 			SimulateAnimation( controller );
 		}
 
