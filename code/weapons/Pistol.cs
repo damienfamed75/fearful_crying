@@ -69,7 +69,7 @@ public partial class Pistol : AmmoWeapon
 	/// </summary>
 	private void Discharge()
 	{
-		if (!HasAmmo)
+		if (!HasAmmo|| TimeSinceDischarge < 0.5f)
 			return;
 
 		TimeSinceDischarge = 0;

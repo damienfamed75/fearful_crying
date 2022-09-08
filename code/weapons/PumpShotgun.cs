@@ -8,9 +8,9 @@ public partial class PumpShotgun : AmmoWeapon
 {
     // Shooting information
 	protected static float Spread => 0.5f;
-	protected static float Force => 5.0f;
-	protected static float BulletDamage => 20.0f;
-	protected static float BulletSize => 5.0f; // Should this be big or small?
+	protected static float Force => 4.0f;
+	protected static float BulletDamage => 8.0f;
+	protected static float BulletSize => 2.0f; // Should this be big or small?
 
     // First person viewmodel
 	public override string ViewModelPath => "weapons/rust_pumpshotgun/v_rust_pumpshotgun.vmdl";
@@ -70,7 +70,7 @@ public partial class PumpShotgun : AmmoWeapon
 	/// </summary>
 	private void Discharge()
 	{
-		if (!HasAmmo)
+		if (!HasAmmo || TimeSinceDischarge < 0.5f)
 			return;
 
 		TimeSinceDischarge = 0;
@@ -85,7 +85,7 @@ public partial class PumpShotgun : AmmoWeapon
 		ShootBullet( pos, rot.Forward, Spread, Force, BulletDamage, BulletSize );
 
 		// Apply impulse backward on the weapon.
-		ApplyAbsoluteImpulse( rot.Backward * 200f );
+		ApplyAbsoluteImpulse( rot.Backward * 400f );
 	}
 
 	/// <summary>
