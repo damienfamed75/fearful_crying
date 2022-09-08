@@ -66,12 +66,7 @@ public partial class AmmoWeapon : Weapon
 			return;
 
 		if (SingleBulletReloading) {
-			// Since this method is called for the first press of the reload button
-			// we are going to ignore this first time because there's an animation
-			// that plays for the beginning of the reload animation where it doesn't
-			// show any bullets being reloaded.
-			TimeSinceReloadSingleBullet = 0;
-			TimeSinceReload = 0;
+			SingleBulletReload();
 		} else {
 			// Get the new current bullet count.
 			var newCurrent = TotalBulletCount + CurrentBulletCount;
