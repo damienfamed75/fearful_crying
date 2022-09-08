@@ -16,6 +16,18 @@ public class InventoryHud : Panel
 	private static float FadeAwayTime => 4f;
 	private bool IsActive { get; set; }
 
+	/// <summary>
+	/// (InputButton, int) tuple that represents (button, slot number)
+	/// 
+	/// This is used to loop and check for inputs and switch to the corresponding
+	/// inventory slot.
+	/// </summary>
+	private readonly (InputButton, int)[] slotInputs = new[]{
+			(InputButton.Slot1, 0), (InputButton.Slot2, 1), (InputButton.Slot3, 2),
+			(InputButton.Slot4, 3), (InputButton.Slot5, 4), (InputButton.Slot6, 5),
+			(InputButton.Slot7, 6), (InputButton.Slot8, 7), (InputButton.Slot9, 8)
+	};
+
 	public InventoryHud()
     {
 		Current = this;
@@ -25,8 +37,6 @@ public class InventoryHud : Panel
 
     public override void Tick()
     {
-		base.Tick();
-
 		var player = Local.Pawn as Player;
         if (player == null)
             return;
@@ -37,62 +47,57 @@ public class InventoryHud : Panel
 			UpdateIcon( player.Inventory.GetSlot( i ), Slots[i], i );
 		}
 
-		if ( itemCount != player.Inventory.Count() )
-		{
+		// If the item count doesn't match the number of items in the inventory.
+		if ( itemCount != player.Inventory.Count() ) {
 			itemCount = player.Inventory.Count();
 			// Delete all of the existing slots.
-			for ( int i = 0; i < Slots.Count; i++) {
-				Slots[i].Delete();
-			}
+			Slots.ForEach( x => x.Delete() );
+			// Clear the inventory slots.
 			Slots.Clear();
-
-			for ( int i = 0; i < itemCount; i++ )
-			{
+			// Re-add the inventory slots.
+			for ( int i = 0; i < itemCount; i++ ) {
 				Slots.Add( new InventoryIcon( i + 1, this ) );
 			}
 
 			SetActive();
 		}
 
+		// If the inventory is active and the TimeSinceActive is greater than
+		// the fade away time then fade out all of the slot icons.
 		if (IsActive && TimeSinceActive > FadeAwayTime ) {
 			IsActive = false;
-
+			// Loop through the inventory slots and and fade them out.
 			for ( int i = 0; i < player.Inventory.Count(); i++) {
 				Slots[i].SetClass( "fade", true );
 			}
 		}
 	}
 
-	private void SetActive()
-	{
-		var player = Local.Pawn as Player;
-		if (player == null)
-			return;
-
-		TimeSinceActive = 0;
-		IsActive = true;
-		for ( int i = 0; i < player.Inventory.Count(); i++) {
-			Slots[i].SetClass( "fade", false );
-		}
-	}
-
+	/// <summary>
+	/// Update the icons to ensure they're representative of the items in the
+	/// inventory.
+	/// </summary>
 	private static void UpdateIcon(Entity ent, InventoryIcon inventoryIcon, int i)
 	{
 		var player = Local.Pawn as Player;
 		if (player == null)
 			return;
-
+		// If the entity is null then clear the icon out.
 		if (ent == null) {
 			inventoryIcon.Clear();
 			return;
 		}
-
+		// Set the icon label and target entity.
 		var displayInfo = DisplayInfo.For( ent );
 		inventoryIcon.TargetEnt = ent;
 		inventoryIcon.Label.Text = displayInfo.Name;
+		// Set this item to active if it's currently equipped.
 		inventoryIcon.SetClass( "active", player.ActiveChild == ent );
 	}
 
+	/// <summary>
+	/// Called when client makes any inputs.
+	/// </summary>
 	[Event("buildinput")]
 	public void ProcessClientInput(InputBuilder input)
 	{
@@ -104,43 +109,68 @@ public class InventoryHud : Panel
 		if (inventory == null)
 			return;
 
-		if (input.Pressed(InputButton.Slot1)) SetActiveSlot( input, inventory, 0 );
-		if (input.Pressed(InputButton.Slot2)) SetActiveSlot( input, inventory, 1 );
-		if (input.Pressed(InputButton.Slot3)) SetActiveSlot( input, inventory, 2 );
-		if (input.Pressed(InputButton.Slot4)) SetActiveSlot( input, inventory, 3 );
-		if (input.Pressed(InputButton.Slot5)) SetActiveSlot( input, inventory, 4 );
-		if (input.Pressed(InputButton.Slot6)) SetActiveSlot( input, inventory, 5 );
-		if (input.Pressed(InputButton.Slot7)) SetActiveSlot( input, inventory, 6 );
-		if (input.Pressed(InputButton.Slot8)) SetActiveSlot( input, inventory, 7 );
-		if (input.Pressed(InputButton.Slot9)) SetActiveSlot( input, inventory, 8 );
+		// Loop through all of the slot input buttons and check for inputs.
+		foreach (var (button, slotNum) in slotInputs) {
+			if (input.Pressed(button)) {
+				SetActive();
+				SetActiveSlot( input, inventory, slotNum );
+			}
+		}
 
+		// Save the mousewheel as a variable because for some reason input.MouseWheel
+		// changes value from the condition to the statement.
 		var mwheel = input.MouseWheel;
-		if (mwheel != 0) SwitchActiveSlot( input, inventory, -mwheel );
+		if (mwheel != 0) {
+			SetActive();
+			SwitchActiveSlot( input, inventory, -mwheel );
+		}
 	}
 
-	private void SetActiveSlot(InputBuilder input, IBaseInventory inventory, int i)
+	private void SetActive()
 	{
 		var player = Local.Pawn as Player;
 		if (player == null)
 			return;
+		// Set the inventory hud to active
+		TimeSinceActive = 0;
+		IsActive = true;
+		// "Unfade" all of the inventory slot icons.
+		for ( int i = 0; i < player.Inventory.Count(); i++) {
+			Slots[i].SetClass( "fade", false );
+		}
+	}
 
+	/// <summary>
+	/// SetActiveSlot swaps the active slot to the provided slot number.
+	///
+	/// If the provided index is already equipped then nothing happens.
+	/// </summary>
+	private static void SetActiveSlot(InputBuilder input, IBaseInventory inventory, int i)
+	{
+		var player = Local.Pawn as Player;
+		if (player == null)
+			return;
+		// Get the item at the wanted slot.
 		var ent = inventory.GetSlot( i );
+		// If the current active child is the same then return.
 		if (player.ActiveChild == ent)
 			return;
-
+		// If the entity is null then return.
 		if (ent == null)
 			return;
-
-		SetActive();
+		// Swap the active item.
 		input.ActiveChild = ent;
 	}
 
-	private void SwitchActiveSlot(InputBuilder input, IBaseInventory inventory, int idelta)
+	/// <summary>
+	/// SwitchActiveSlot change active slot by the provided idelta.
+	/// </summary>
+	private static void SwitchActiveSlot(InputBuilder input, IBaseInventory inventory, int idelta)
 	{
 		var count = inventory.Count();
 		if (count == 0)
 			return;
-
+		// Get the next slot by the delta.
 		var slot = inventory.GetActiveSlot();
 		var nextSlot = slot + idelta;
 
@@ -150,7 +180,6 @@ public class InventoryHud : Panel
 		while (nextSlot >= count)
 			nextSlot -= count;
 
-		Log.Info( $"currActive[{slot}] nextSlot[{nextSlot}] idelta[{idelta}]" );
 		SetActiveSlot( input, inventory, nextSlot );
 	}
 }
