@@ -14,5 +14,6 @@ public partial class FearfulCryingHud : HudEntity<RootPanel>
 		RootPanel.AddChild<Crosshair>();
 		RootPanel.AddChild<Health>();
 		RootPanel.AddChild<Ammo>();
+		RootPanel.AddChild<InventoryHud>();
 	}
 }

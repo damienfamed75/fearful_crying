@@ -14,6 +14,7 @@ public partial class PumpShotgun : AmmoWeapon
 
     // First person viewmodel
 	public override string ViewModelPath => "weapons/rust_pumpshotgun/v_rust_pumpshotgun.vmdl";
+	public override float DeployTime => 2f;
 
 	// Sounds
 	private static string DryFireSound => "rust_pumpshotgun-dryfire";

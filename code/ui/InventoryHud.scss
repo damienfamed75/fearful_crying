@@ -1,0 +1,86 @@
+InventoryHud
+{
+    position: absolute;
+    bottom: 250px;
+    right: 100px;
+
+    // font-size: 36px;
+    // font-weight: 600;
+    // font-family: Poppins;
+
+    // color: white;
+    // background-color: rgba(#333, 0.5);
+
+    justify-content: center;
+    align-items: flex-end;
+    width: 320;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+InventoryIcon
+{
+    
+    // animation-delay: 2s;
+    // -webkit-animation-delay: 1s;
+    // -webkit-animation-fill-mode: forwards;
+    // animation-fill-mode: forwards;
+
+    width: 200px;
+    height: 48px;
+    margin: 2 2px;
+    position: relative;
+    transition: all 0.2s ease-in;
+    font-family: Poppins;
+    font-size: 32px;
+    background-color: rgba(#333, 0.5);
+    backdrop-filter: blur(50px);
+    border-radius: 10px;
+    opacity: 1;
+
+    .item-name
+    {
+        padding: 5px;
+        left: 10px;
+        color: white;
+        font-size: 16px;
+        text-align: left;
+        position: absolute;
+        align-self: center;
+    }
+
+    .slot-number
+    {
+        color: #bf250f;
+        font-weight: 900;
+        text-align: start;
+        position: absolute;
+        align-self: center;
+        padding: 10px;
+        right: 0px;
+    }
+
+    &.active
+    {
+        opacity: 1;
+        background-color: rgba(#bf250f, 1.0);
+        transition: all 0.1s ease-out;
+        width: 240px;
+        height: 52px;
+        .slot-number
+        {
+            color: #fff;
+        }
+        .item-name
+        {
+            transition: all 0.1s ease-out;
+            font-size: 20px;
+        }
+    }
+
+    &.fade
+    {
+        opacity: 0;
+        transition: all 1s ease-in-out;
+    }
+}

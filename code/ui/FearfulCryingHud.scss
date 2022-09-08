@@ -21,6 +21,7 @@ Health
     height: 32px;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+    transition: all 0.1s ease-in;
 }
 
 .health-bar
@@ -29,6 +30,7 @@ Health
     height: 32px;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
+    transition: all 0.1s ease-in;
 }
 
 Ammo
