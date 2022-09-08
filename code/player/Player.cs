@@ -188,7 +188,7 @@ partial class FearfulCryPlayer : Player
 
 			timeSinceJumpReleased = 0;
 		}
-		
+
 		// If cardinal directional movement detected.
 		if (Input.Left != 0 || Input.Forward != 0) {
 			timeSinceJumpReleased = 1;
@@ -216,7 +216,10 @@ partial class FearfulCryPlayer : Player
 		animHelper.WithLookAt( EyePosition + EyeRotation.Forward * 100f, 1f, 1f, 0.5f);
 		animHelper.AimAngle = Input.Rotation;
 		animHelper.FootShuffle = shuffle;
+		animHelper.DuckLevel = MathX.Lerp( animHelper.DuckLevel, controller.HasTag( "ducked" ) ? 1 : 0, Time.Delta * 10.0f );
+		animHelper.VoiceLevel = (Host.IsClient && Client.IsValid()) ? Client.TimeSinceLastVoice < 0.5f ? Client.VoiceLevel : 0.0f : 0.0f;
 		animHelper.IsGrounded = GroundEntity != null;
+		animHelper.IsSitting = controller.HasTag( "sitting" );
 		animHelper.IsWeaponLowered = false;
 		//!TODO add rest of params
 
@@ -251,6 +254,8 @@ partial class FearfulCryPlayer : Player
 	{
 		return Velocity.WithZ( 0 ).Length.LerpInverse( 0f, 200f ) * 5f;
 	}
+
+	// override 
 
 	//// Called every frame, client side.
 	//public override void FrameSimulate( Client cl )

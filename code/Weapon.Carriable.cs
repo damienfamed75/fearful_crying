@@ -9,7 +9,17 @@ public partial class Weapon : BaseWeapon, IUse
 	{
 		base.ActiveStart( ent );
 
+		ActiveStartEffects();
+
 		TimeSinceDeployed = 0;
+	}
+
+	[ClientRpc]
+	public void ActiveStartEffects()
+	{
+		if ( ViewModelEntity != null ) {
+			ViewModelEntity.SetAnimParameter( "deploy", true );
+		}
 	}
 
     /// <summary>
