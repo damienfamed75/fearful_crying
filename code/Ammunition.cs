@@ -1,14 +1,21 @@
 using Sandbox;
 
+public enum AmmoType
+{
+	None,
+	Pistol,
+	Shotgun
+}
+
 public partial class Ammunition : ModelEntity, IUse
 {
     // Override all of these in ammunition definition.
-    protected virtual System.Type WeaponType { get; set; }
     protected virtual int AmmoAmount { get; set; }
     protected virtual string ModelPath { get; set; }
     protected virtual string SoundPath { get; set; }
+	protected virtual AmmoType AmmoType { get; set; }
 
-    public PickupTrigger PickupTrigger { get; protected set; }
+	public PickupTrigger PickupTrigger { get; protected set; }
 	
     public override void Spawn()
     {
@@ -61,11 +68,15 @@ public partial class Ammunition : ModelEntity, IUse
 
 		for ( int i = 0; i < player.Inventory.Count(); i++) {
 			var ent = player.Inventory.GetSlot( i );
-            // If the matching weapon type is found in the inventory
-            // then add to the total bullet count.
-            if (ent.GetType() == WeaponType) {
-				(ent as AmmoWeapon).TotalBulletCount += AmmoAmount;
-				PlaySound(SoundPath);
+            // If this entity is not an ammo weapon then continue to the next
+			// inventory slot.
+            if (ent is not AmmoWeapon aw)
+				continue;
+
+			// Check if ammo types match.
+			if (aw.AmmoType == AmmoType) {
+				aw.TotalBulletCount += AmmoAmount;
+				PlaySound( SoundPath );
 				Delete();
 			}
 		}

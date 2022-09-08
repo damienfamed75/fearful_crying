@@ -14,6 +14,7 @@ public partial class Pistol : AmmoWeapon
 
 	// First person viewmodel
 	public override string ViewModelPath => "weapons/rust_pistol/v_rust_pistol.vmdl";
+	public override AmmoType AmmoType => AmmoType.Pistol;
 
 	// Sounds
 	private static string DryFireSound => "revolver-dryfire";

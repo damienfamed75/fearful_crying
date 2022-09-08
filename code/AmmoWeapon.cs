@@ -45,6 +45,8 @@ public partial class AmmoWeapon : Weapon
 	/// </summary>
 	public virtual float SingleBulletReloadTime => 0.6f;
 
+	public virtual AmmoType AmmoType { get; set; }
+
 	/// <summary>
 	/// The amount of time since a single bullet was loaded.
 	/// Used for SingleBulletReloading weapons.
