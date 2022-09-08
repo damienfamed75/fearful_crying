@@ -66,7 +66,12 @@ public partial class AmmoWeapon : Weapon
 			return;
 
 		if (SingleBulletReloading) {
-			SingleBulletReload();
+			// Since this method is called for the first press of the reload button
+			// we are going to ignore this first time because there's an animation
+			// that plays for the beginning of the reload animation where it doesn't
+			// show any bullets being reloaded.
+			TimeSinceReloadSingleBullet = 0;
+			TimeSinceReload = 0;
 		} else {
 			// Get the new current bullet count.
 			var newCurrent = TotalBulletCount + CurrentBulletCount;
@@ -108,7 +113,18 @@ public partial class AmmoWeapon : Weapon
 	public override void Simulate( Client player )
 	{
 		if (IsReloading && SingleBulletReloading && (TimeSinceReloadSingleBullet > SingleBulletReloadTime)) {
-			SingleBulletReload();
+			// Capture any primary attack input that would interrupt the
+			// single bullet reloading.
+			bool interruptAttack = Input.Pressed( InputButton.PrimaryAttack )
+				|| Input.Released( InputButton.PrimaryAttack )
+				|| Input.Down( InputButton.PrimaryAttack );
+
+			if ( interruptAttack ) {
+				// Fix the time since reload to finish the reload.
+				TimeSinceReload = ReloadTime+1;
+			} else {
+				SingleBulletReload();
+			}
 		}
 
 		// Call after checking for single reloads because they should be treated
