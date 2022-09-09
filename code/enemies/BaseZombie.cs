@@ -1,6 +1,5 @@
 using System.Linq;
 using Sandbox;
-using SandboxEditor;
 
 namespace FearfulCry.Enemies;
 
@@ -88,7 +87,8 @@ public partial class BaseZombie : BaseNpc
 
             if (!Steer.Output.Finished) {
 				InputVelocity = Steer.Output.Direction.Normal;
-				Velocity = Velocity.AddClamped( InputVelocity * Time.Delta * 200, Speed );
+				Velocity = Velocity.AddClamped( InputVelocity * Time.Delta * 500, Speed ); // 500
+				// DebugOverlay.Line( Position, Position + InputVelocity * 500, Color.Cyan );
 			}
 
             if (nav_drawpath) {
@@ -96,8 +96,6 @@ public partial class BaseZombie : BaseNpc
                 // Debug draw path
 			}
 		}
-
-		// SetAnimParameter( "b_climbing", false );
 
         Move(Time.Delta);
 
@@ -120,7 +118,7 @@ public partial class BaseZombie : BaseNpc
 
     protected virtual void Move(float timeDelta)
     {
-		var bbox = BBox.FromHeightAndRadius( 52, 4 );
+		var bbox = BBox.FromHeightAndRadius( 52, 12 );
 
 		EnemyMoveHelper move = new( Position, Velocity ) {
 			MaxStandableAngle = 50f
@@ -137,11 +135,16 @@ public partial class BaseZombie : BaseNpc
 				move.TryMove( timeDelta );
 			}
 		}
+		// If the zombie hits a wall and wandering around while the path is not
+		// yet finished, then find a new target location.
+		if (move.HitWall && ZombieState == ZombieState.Wander && !Steer.Output.Finished) {
+			(Steer as Nav.Wander).FindNewTarget(Position);
+		}
 
 		//! TODO
 		var tr = move.TraceDirection( Vector3.Down * 10.0f );
         if (Velocity.z < 5 && move.IsFloor(tr)) {
-			// SetAnimParameter( "b_grounded", true );
+			SetAnimParameter( "b_grounded", true );
 			GroundEntity = tr.Entity;
 
             if (!tr.StartedSolid) {
@@ -162,16 +165,21 @@ public partial class BaseZombie : BaseNpc
 
         // if we hit a wall or prop/glass. Then we must jump over or break it.
         if (GroundEntity != null && move.HitWall && TimeUntilUnstunned < 0) {
-			var jumptr = Trace.Ray( Position + Vector3.Up * 100, EyePosition + Vector3.Up * 40 + Rotation.Forward * 60 )
+			DebugOverlay.Line(
+				Position + Vector3.Up * 5, // 10
+				EyePosition + Vector3.Up * 40 + Steer.Output.Direction * 60,
+				Color.White
+			);
+			var jumptr = Trace.Ray( Position + Vector3.Up * 10, EyePosition + Vector3.Up * 10 + Steer.Output.Direction * 60 )
 				.UseHitboxes()
-				.WithoutTags( "zombie" )
+				.WithoutTags( "zombie", "trigger" )
 				.EntitiesOnly()
 				.Ignore( this )
 				.Size( 10 )
 				.Run();
 
-			if (jumptr.Hit) {
-				HitBreakableObject();
+			if (jumptr.Hit && ZombieState == ZombieState.Chase) {
+				HitBreakableObject( jumptr );
 			}
 		}
 
@@ -179,10 +187,15 @@ public partial class BaseZombie : BaseNpc
 		Velocity = move.Velocity;
 	}
 
-	public virtual void HitBreakableObject()
+	public virtual void HitBreakableObject(TraceResult tr)
 	{
 
 	}
+
+	// public virtual void HitBreakableObject(bool forward = true)
+	// {
+
+	// }
 
     public virtual void TryPathOffNav()
     {
@@ -217,8 +230,6 @@ public partial class BaseZombie : BaseNpc
 		base.TakeDamage( info );
 
         if (info.Attacker is Player attacker) {
-            // attacker.DidDamage()
-
             if (Health <= 0) {
 				info.Attacker.Client.AddInt( "kills" );
 			}

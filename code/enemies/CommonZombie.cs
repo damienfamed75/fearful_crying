@@ -116,7 +116,7 @@ public partial class CommonZombie : BaseZombie
     public void StartChase(Entity targ)
     {
 		target = targ;
-        if (target == null) {
+        if (!target.IsValid()) {
 			Log.Warning( $"invalid target for {this}" );
 			return;
 		}
@@ -124,7 +124,7 @@ public partial class CommonZombie : BaseZombie
         if (ZombieState == ZombieState.Chase)
 			return;
 
-		// SetAnimParameter("")
+		SetAnimParameter( "b_jump", true );
 
 		ZombieState = ZombieState.Chase;
 		Speed = RunSpeed;
@@ -197,10 +197,8 @@ public partial class CommonZombie : BaseZombie
 				if (TimeSinceAttacked > AttackSpeed && TimeUntilUnstunned < 0) {
 					var range = 60;
 					if ( (Position - target.Position).Length < range || (EyePosition - target.Position).Length < range ) {
-						// TryMeleeAttack();
 						TimeSinceAttacked = -3;
 						TryMeleeAttack();
-						// MeleeAttack();
 					}
 				}
 			}
@@ -213,21 +211,24 @@ public partial class CommonZombie : BaseZombie
 			FindTarget();
 		}
 		if (target.LifeState == LifeState.Dead) {
-			Log.Warning( "lifestate => dead (indv check)" );
 			StartWander();
 		}
 	}
 
-	public override void HitBreakableObject()
+	public override void HitBreakableObject(TraceResult tr)
 	{
 		if (TimeSinceAttacked > AttackSpeed) {
 			TimeSinceAttacked = -3;
-			// Log.Info( "try hit breakable object" );
-			// TryMeleeAttack();
-			// PlaySoundOnClient( "rust_flashlight.attack" );
-			SetAnimParameter( "b_attack", true );
-			MeleeAttack();
+			Log.Info( $"try hit ent[{tr.Entity}]" );
+			SetAnimParameter( "b_jump", true );
 			Velocity *= .1f;
+
+			var damageInfo = DamageInfo.FromBullet( tr.EndPosition, Rotation.Forward * 250, AttackDamage )
+				.UsingTraceResult( tr )
+				.WithAttacker( this )
+				.WithWeapon( this );
+
+			tr.Entity.TakeDamage( damageInfo );
 		}
 	}
 
@@ -247,12 +248,12 @@ public partial class CommonZombie : BaseZombie
 			return;
 
 		PlaySoundOnClient( "rust_flashlight.attack" );
-		SetAnimParameter( "b_attack", true );
+		SetAnimParameter( "b_jump", true );
 		MeleeAttack();
 		Velocity *= .1f;
 	}
 
-	public void MeleeAttack()
+	public void MeleeAttack(Vector3 rotForward = default)
 	{
 		Rand.SetSeed( Time.Tick );
 
@@ -262,20 +263,25 @@ public partial class CommonZombie : BaseZombie
 		Velocity = 0;
 		TimeSinceAttacked = 0 - Rand.Float(1); // Some variation in attacks.
 
-		var forward = Rotation.Forward;
+		if (rotForward == default)
+			rotForward = Rotation.Forward;
+
+		var forward = rotForward;
+		// var forward = Rotation.Forward;
 		forward += (Vector3.Random + Vector3.Random + Vector3.Random) * .1f;
 		forward = forward.Normal;
 
 		foreach (var tr in TraceMelee(EyePosition, EyePosition+forward * AttackDistance, 50)) {
 			// Create a bullet impact where the attack was made.
 			tr.Surface.DoBulletImpact( tr );
-			Log.Info($"Impact {tr.Surface}");
-			tr.Entity.ApplyLocalImpulse( forward * 20 );
+			tr.Entity.ApplyLocalImpulse( forward * 5 );
 
 			if (!IsServer || !tr.Entity.IsValid)
 				continue;
+
+			Log.Info( $"hit ent[{tr.Entity}]" );
 			// Create the damage information.
-			var damageInfo = DamageInfo.FromBullet( tr.EndPosition, forward * 300, AttackDamage )
+			var damageInfo = DamageInfo.FromBullet( tr.EndPosition, forward * 100, AttackDamage )
 				.UsingTraceResult( tr )
 				.WithAttacker( this )
 				.WithWeapon( this );
@@ -291,10 +297,10 @@ public partial class CommonZombie : BaseZombie
 	{
 		var tr = Trace.Ray( from, to )
 			.Ignore( Owner )
-			.WithoutTags( "zombie" )
+			.WithoutTags( "zombie", "trigger" )
 			.EntitiesOnly()
 			.Ignore( this )
-			.WithTag( "player" ) // If you remove this, zombies hit the air...?
+			// .WithTag( "player" ) // If you remove this, zombies hit the air...?
 			.Size( radius )
 			.Run();
 		

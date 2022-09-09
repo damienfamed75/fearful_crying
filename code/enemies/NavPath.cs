@@ -37,9 +37,10 @@ public class NavPath
 			var path = NavMesh.PathBuilder( fromFixed.Value )
 				.WithSharpStartAngle( sharpStartAngle )
 				.WithStartVelocity( velocity / 2 )
+				.WithStepHeight( 16f )
 				.WithMaxClimbDistance( 500 )
 				.WithMaxDropDistance( 3000 )
-				.WithMaxDetourDistance( 100 )
+				.WithMaxDetourDistance( 800 )
 				.WithDropDistanceCostScale( 2f )
 				.WithPartialPaths()
 				.Build( toFixed.Value );

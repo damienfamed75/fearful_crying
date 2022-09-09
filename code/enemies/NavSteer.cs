@@ -53,7 +53,7 @@ public class NavSteer
     {
 		var center = position + Output.Direction * radius * 0.5f;
 
-		var objectRadius = 200f; //! TODO remove magic number.
+		var objectRadius = 160f; //! TODO remove magic number. // 200f
 		Vector3 avoidance = default;
 
 		var distanceToTarget = (position - Target).Length;
@@ -73,8 +73,7 @@ public class NavSteer
 
             if (dist < 0.001f) //! TODO remove magic number
 				continue;
-
-			var thrust = ((objectRadius - dist) / objectRadius).Clamp( 0, 1 );
+			var thrust = ((objectRadius - dist) / objectRadius).Clamp( 0.0f, 1.0f );
             if (thrust <= 0)
 				continue;
 
@@ -84,5 +83,16 @@ public class NavSteer
 		}
 
 		return avoidance;
+	}
+
+	public virtual void DebugDrawPath()
+	{
+		// Path.DebugDraw( 0.1f, 1f );
+		var points = Path.Points.ToArray();
+		for ( var i = 0; i < points.Length; i++ ) {
+			if (points.Length > i+1) {
+				DebugOverlay.Line( points[i], points[i + 1], Color.Green );
+			}
+		}
 	}
 }
