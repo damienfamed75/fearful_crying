@@ -9,7 +9,7 @@ public partial class BaseNpc
 
 	private static float SecondsToDelete => 20.0f;
 
-	private static float RagdollForce => 1000.0f;
+	private static float RagdollForce => 1500.0f; // 1000.0f
 
 	/// <summary>
 	/// Turns the entity into a ragdoll and applies force. The more force
@@ -47,8 +47,6 @@ public partial class BaseNpc
 				clothing.RenderColor = RenderColor;
 			}
 		}
-
-		ent.PhysicsGroup.AddVelocity( force );
 
         // If force bone was specified.
         if (forceBone >= 0) {

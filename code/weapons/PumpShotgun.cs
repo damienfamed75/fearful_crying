@@ -8,7 +8,7 @@ public partial class PumpShotgun : AmmoWeapon
 {
     // Shooting information
 	protected static float Spread => 0.5f;
-	protected static float Force => 4.0f;
+	protected static float Force => 8.0f;
 	protected static float BulletDamage => 8.0f;
 	protected static float BulletSize => 2.0f; // Should this be big or small?
 
@@ -105,5 +105,13 @@ public partial class PumpShotgun : AmmoWeapon
 		if (eventData.Speed > 500f) {
 			Discharge();
 		}
+	}
+
+	public override void SimulateAnimator( CitizenAnimationHelper anim )
+	{
+		base.SimulateAnimator( anim );
+
+		anim.HoldType = CitizenAnimationHelper.HoldTypes.Shotgun;
+		anim.AimBodyWeight = 1.0f;
 	}
 }
