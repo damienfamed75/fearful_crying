@@ -19,13 +19,6 @@ partial class FearfulCryPlayer : Player
 	/// </summary>
 	public ClothingContainer Clothing = new();
 
-	protected virtual Vector3 LightOffset => Vector3.Forward * 20;
-	private SpotLightEntity FirstPersonFlashlight;
-	private SpotLightEntity WorldFlashlight;
-
-	[Net, Predicted]
-	private bool IsFlashlightOn { get; set; }
-
 	/// <summary>
 	/// Default init
 	/// </summary>
@@ -104,32 +97,6 @@ partial class FearfulCryPlayer : Player
 
 	}
 
-	private SpotLightEntity CreateLight()
-	{
-		var light = new SpotLightEntity{
-			Enabled = false,
-			DynamicShadows = true,
-			Range = 1024,
-			Falloff = 1.0f,
-			LinearAttenuation = 0.0f,
-			QuadraticAttenuation = 1.0f,
-			Brightness = 2,
-			Color = Color.White,
-			InnerConeAngle = 20,
-			OuterConeAngle = 40,
-			FogStrength = 1.0f,
-			Owner = this,
-			// Parent = this,
-			LightCookie = Texture.Load("materials/effects/lightcookie.vtex"),
-		};
-
-		light.UseFogNoShadows();
-		light.EnableLagCompensation = true;
-		light.EnableViewmodelRendering = true;
-
-		return light;
-	}
-
 	public override void Respawn()
 	{
 		// Set the player model to the citizen model.
@@ -187,45 +154,9 @@ partial class FearfulCryPlayer : Player
 
 		TickPlayerUse();
 		SimulateActiveChild( cl, ActiveChild );
-
-		// If the flashlight button is pressed then toggle the flashlight.
-		if (Input.Pressed(InputButton.Flashlight)) {
-			IsFlashlightOn = !IsFlashlightOn;
-			PlaySound( IsFlashlightOn ? "flashlight-on" : "flashlight-off" );
-
-			if (IsServer) {
-				if (!WorldFlashlight.IsValid()) {
-					WorldFlashlight = CreateLight();
-					WorldFlashlight.Transform = Transform;
-					WorldFlashlight.EnableHideInFirstPerson = true;
-				}
-				WorldFlashlight.Enabled = IsFlashlightOn;
-			}
-			if (IsClient) {
-				if (!FirstPersonFlashlight.IsValid()) {
-					FirstPersonFlashlight = CreateLight();
-					FirstPersonFlashlight.Transform = Transform;
-					FirstPersonFlashlight.EnableViewmodelRendering = true;
-				}
-				FirstPersonFlashlight.Enabled = IsFlashlightOn;
-			}
-			//! TODO ToggleFlashlight(IsClient ? FirstPersonFlashlight : WorldFlashlight);
-		}
-
-		// Update the position and rotation of the flashlight.
-		if (IsFlashlightOn) {
-			if (IsClient) {
-				FirstPersonFlashlight.SetParent( null );
-				FirstPersonFlashlight.Rotation = EyeRotation;
-				FirstPersonFlashlight.Position = EyePosition + EyeRotation.Forward * 20f;
-				FirstPersonFlashlight.SetParent( this );
-			} else {
-				WorldFlashlight.SetParent( null );
-				WorldFlashlight.Rotation = EyeRotation;
-				WorldFlashlight.Position = EyePosition + EyeRotation.Forward * 20f;
-				WorldFlashlight.SetParent( this );
-			}
-		}
+		// Check for flashlight related inputs and update the position/rotation
+		// of the flashlight if active.
+		FlashlightTick();
 
 		if (Input.Pressed(InputButton.Drop)) {
 			var dropped = Inventory.DropActive();
