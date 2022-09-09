@@ -58,11 +58,11 @@ public partial class BaseNpc
         if (!this.IsValid())
 			return;
 
-		await Task.Delay( 200 );
 		ClearMaterialOverride();
+
+		await Task.Delay( 200 );
         if (!this.IsValid())
 			return;
-
 
 		var SkinMaterial = Clothing.Clothing.Select( x => x.SkinMaterial ).Select( x => Material.Load( x ) ).FirstOrDefault();
 		// var EyesMaterial = Clothing.Clothing.Select( x => x.EyesMaterial ).Select( x => Material.Load( x ) ).FirstOrDefault();
@@ -71,7 +71,7 @@ public partial class BaseNpc
 
         //? This line causes some odd wireframing on remote clients.
 		// SetMaterialOverride( EyesMaterial, "eyes" );
-	}
+    }
 
     /// <summary>
 	/// Randomize the clothing wardrobe of this citizen.
@@ -94,9 +94,9 @@ public partial class BaseNpc
                 "models/citizen_clothes/skin02.clothing",
                 "models/citizen_clothes/skin03.clothing",
                 "models/citizen_clothes/skin04.clothing",
-                "models/citizen_clothes/skin05.clothing",
+                // "models/citizen_clothes/skin05.clothing",
 			} );
-        if (ResourceLibrary.TryGet<Clothing>(model, out item)) {
+        if (ResourceLibrary.TryGet(model, out item)) {
 			Clothing.Clothing.Add( item );
 		}
 
@@ -121,7 +121,7 @@ public partial class BaseNpc
                 "models/citizen_clothes/hair/hair_ponytail/ponytail.clothing",
                 "models/citizen_clothes/hair/hair_wavyblack/hair_wavyblack.clothing",
 			} );
-        if (ResourceLibrary.TryGet<Clothing>(model, out item)) {
+        if (ResourceLibrary.TryGet(model, out item)) {
 			Clothing.Clothing.Add( item );
 		}
 
@@ -134,7 +134,7 @@ public partial class BaseNpc
                 "models/citizen_clothes/hair/eyebrows_bushy/eyebrows_bushy.clothing",
                 "models/citizen_clothes/hair/eyebrows_drawn/eyebrows_drawn.clothing",
 			} );
-        if (ResourceLibrary.TryGet<Clothing>(model, out item)) {
+        if (ResourceLibrary.TryGet(model, out item)) {
 			Clothing.Clothing.Add( item );
 		}
 
@@ -151,7 +151,7 @@ public partial class BaseNpc
                 "models/citizen_clothes/hair/stubble/stubble.clothing",
                 "models/citizen_clothes/hair/eyelashes/eyelashes.clothing",
 			} );
-        if (ResourceLibrary.TryGet<Clothing>(model, out item)) {
+        if (ResourceLibrary.TryGet(model, out item)) {
 			Clothing.Clothing.Add( item );
 		}
 
@@ -164,8 +164,8 @@ public partial class BaseNpc
                 "models/citizen_clothes/shirt/Chainmail/chainmail.clothing",
                 "models/citizen_clothes/shirt/Flannel_Shirt/flannel_shirt.clothing",
                 "models/citizen_clothes/shirt/Hawaiian_Shirt/Hawaiian Shirt.clothing",
-                "models/citizen_clothes/shirt/Jumpsuit/blue_jumpsuit.clothing",
-                "models/citizen_clothes/shirt/Jumpsuit/prison_jumpsuit.clothing",
+                // "models/citizen_clothes/shirt/Jumpsuit/blue_jumpsuit.clothing",
+                // "models/citizen_clothes/shirt/Jumpsuit/prison_jumpsuit.clothing",
                 "models/citizen_clothes/shirt/Longsleeve_Shirt/longsleeve_shirt.clothing",
                 "models/citizen_clothes/shirt/Priest_Shirt/priest_shirt.clothing",
                 "models/citizen_clothes/shirt/Tanktop/tanktop.clothing",
@@ -173,7 +173,7 @@ public partial class BaseNpc
 
                 "models/citizen_clothes/vest/Cardboard_Chest/cardboard_chest.clothing",
 			} );
-        if (ResourceLibrary.TryGet<Clothing>(model, out item)) {
+        if (ResourceLibrary.TryGet(model, out item)) {
 			Clothing.Clothing.Add( item );
 		}
 
@@ -186,7 +186,7 @@ public partial class BaseNpc
                 "models/citizen_clothes/trousers/Jeans/jeans.clothing",
                 "models/citizen_clothes/trousers/SmartTrousers/trousers.smart.clothing",
 			} );
-        if (ResourceLibrary.TryGet<Clothing>(model, out item)) {
+        if (ResourceLibrary.TryGet(model, out item)) {
 			Clothing.Clothing.Add( item );
 		}
 	}
