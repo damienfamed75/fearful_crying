@@ -44,7 +44,7 @@ public partial class BaseNpc
 				var clothing = new ModelEntity();
 				clothing.CopyFrom( e );
 				clothing.SetParent( ent, true );
-				clothing.RenderColor = RenderColor;
+				clothing.RenderColor = e.RenderColor;
 			}
 		}
 
