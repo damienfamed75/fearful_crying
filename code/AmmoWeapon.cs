@@ -45,6 +45,9 @@ public partial class AmmoWeapon : Weapon
 	/// </summary>
 	public virtual float SingleBulletReloadTime => 0.6f;
 
+	/// <summary>
+	/// AmmoType is used to match an ammunition pack with the weapon.
+	/// </summary>
 	public virtual AmmoType AmmoType { get; set; }
 
 	/// <summary>

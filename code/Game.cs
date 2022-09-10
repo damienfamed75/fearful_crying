@@ -2,7 +2,6 @@
 using Sandbox;
 using System;
 using System.Linq;
-using System.Security;
 
 //
 // You don't need to put things in a namespace, but it doesn't hurt.
@@ -83,6 +82,15 @@ public partial class MyGame : Sandbox.Game
 		}
 
 		NumClients++;
+	}
+
+	/// <summary>
+	/// A client has been disconnected from the server. Update the client number.
+	/// </summary>
+	public override void ClientDisconnect( Client cl, NetworkDisconnectionReason reason )
+	{
+		base.ClientDisconnect( cl, reason );
+		NumClients--;
 	}
 
 	public override void FrameSimulate( Client cl )
