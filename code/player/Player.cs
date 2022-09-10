@@ -91,6 +91,18 @@ partial class FearfulCryPlayer : Player
 		base.TakeDamage( info );
 	}
 
+	public int GiveHealth(int amount)
+	{
+		var total = amount + Health;
+		if (total > MaxHealth)
+			total = MaxHealth;
+
+		var taken = total - Health;
+		Health = total;
+
+		return (int)taken;
+	}
+
 	[ClientRpc]
 	public void TookDamage(DamageFlags damageFlags, Vector3 forcePos, Vector3 force)
 	{
@@ -207,7 +219,7 @@ partial class FearfulCryPlayer : Player
 	{
 		if ( controller == null )
 			return;
-			
+
 		var turnSpeed = .02f;
 		var iRot = Rotation.LookAt( Input.Rotation.Forward.WithZ( 0 ), Vector3.Up );
 		Rotation = Rotation.Slerp( Rotation, iRot, controller.WishVelocity.Length * turnSpeed * Time.Delta );

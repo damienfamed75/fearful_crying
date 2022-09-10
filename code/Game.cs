@@ -35,10 +35,22 @@ public partial class MyGame : Sandbox.Game
 	/// </summary>
 
 	[ConCmd.Admin("heal")]
-	public static void Heal()
+	public static void Heal(int amount = 100)
 	{
-		var callingClient = ConsoleSystem.Caller;
-		(callingClient.Pawn as Player).Health += 10;
+		var callerName = ConsoleSystem.Caller.Name;
+		var callingClient = ConsoleSystem.Caller.Pawn as FearfulCryPlayer;
+		var healedAmount = callingClient.GiveHealth( amount );
+		Log.Info( $"gave {callerName} {healedAmount} health" );
+	}
+
+	[ConCmd.Admin("damage")]
+	public static void Damage(int amount)
+	{
+		var callerName = ConsoleSystem.Caller.Name;
+		var callingClient = ConsoleSystem.Caller.Pawn as FearfulCryPlayer;
+		var damageInfo = DamageInfo.Generic( amount );
+		callingClient.TakeDamage( damageInfo );
+		Log.Info( $"damaged {callerName} {amount} health" );
 	}
 
 
