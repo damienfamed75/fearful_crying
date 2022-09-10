@@ -38,6 +38,15 @@
       "RootNamespace": "FearfulCrying",
       "DefineConstants": "SANDBOX;ADDON;DEBUG",
       "NoWarn": "1701;1702;1591;"
+    },
+    "GameSettings": {
+      "nav_drawpath": {
+        "DisplayType": "Boolean",
+        "Choices": [],
+        "ConVarName": "nav_drawpath",
+        "DisplayName": "Draw Nav Path",
+        "DefaultValue": "false"
+      }
     }
   }
 }
