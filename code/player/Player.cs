@@ -120,6 +120,8 @@ partial class FearfulCryPlayer : Player
 		//
 		// Inventory
 		//
+		ClearAmmo();
+
 		Inventory.Add( new PumpShotgun(), true);
 		Inventory.Add( new Pistol());
 

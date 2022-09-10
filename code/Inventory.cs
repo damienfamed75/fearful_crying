@@ -43,7 +43,6 @@ partial class Inventory : BaseInventory
 
 	public override bool Drop( Entity ent )
 	{
-		
 		if ( !Host.IsServer )
 			return false;
 		// If the player doesn't even contain this item in their inventory, return false.
@@ -55,5 +54,30 @@ partial class Inventory : BaseInventory
 		}
 
 		return ent.Parent == null;
+	}
+
+	public override void OnChildAdded( Entity child )
+	{
+		base.OnChildAdded( child );
+		Sort();
+	}
+
+	public override void OnChildRemoved( Entity child )
+	{
+		base.OnChildRemoved( child );
+		Sort();
+	}
+
+	private void Sort()
+	{
+		List.Sort( delegate( Entity x, Entity y ) {
+			var xs = x as IAmmoTypeWeapon;
+			var ys = y as IAmmoTypeWeapon;
+
+			if ((int)xs.GetAmmoType() > (int)ys.GetAmmoType()) {
+				return 1;
+			}
+			return -1;
+		});
 	}
 }

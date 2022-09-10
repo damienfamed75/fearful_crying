@@ -1,3 +1,4 @@
+using FearfulCry.player;
 using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
@@ -16,11 +17,14 @@ public class Ammo : Panel
 		var player = Local.Pawn;
         if (player == null)
 			return;
-		
-		if ( (player as Player).ActiveChild is AmmoWeapon aw ) {
+
+		var fplayer = player as FearfulCryPlayer;
+
+		if ( fplayer.ActiveChild is AmmoWeapon aw ) {
 			Style.Opacity = 1f;
 			Style.BackgroundColor = Color.Parse("#333").Value.WithAlpha(.5f);
-			Label.Text = $"🔥 {aw.CurrentBulletCount} / {aw.TotalBulletCount}";
+			var total = fplayer.AmmoCount( aw.AmmoType );
+			Label.Text = $"🔥 {aw.CurrentBulletCount} / {total}";
 		} else {
 			Style.Opacity = 0f;
 		}

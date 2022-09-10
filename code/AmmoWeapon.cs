@@ -1,6 +1,5 @@
-using System;
+using FearfulCry.player;
 using Sandbox;
-using Sandbox.UI;
 
 public partial class AmmoWeapon : Weapon
 {
@@ -63,7 +62,12 @@ public partial class AmmoWeapon : Weapon
 	public override void Reload()
     {
 		// If there's no more ammo left, then don't reload.
-		if (TotalBulletCount == 0)
+		// if (TotalBulletCount == 0)
+		// 	return;
+		if (Owner == null)
+			return;
+		var fplayer = Owner as FearfulCryPlayer;
+		if (fplayer.AmmoCount(AmmoType) <= 0)
 			return;
 
 		// Don't reload if current magazine is already full.
@@ -73,13 +77,15 @@ public partial class AmmoWeapon : Weapon
 		if (SingleBulletReloading) {
 			SingleBulletReload();
 		} else {
-			// Get the new current bullet count.
-			var newCurrent = TotalBulletCount + CurrentBulletCount;
-			// Subtract from the total ammo.
-			TotalBulletCount -= (MagSize - CurrentBulletCount).Clamp(0, TotalBulletCount);
-			// If the new current is larger than the magazine size, then use the
-			// magazine size instead.
-			CurrentBulletCount = newCurrent > MagSize ? MagSize : newCurrent;
+			var taken = fplayer.TakeAmmo( AmmoType, MagSize - CurrentBulletCount );
+			CurrentBulletCount += taken;
+			// // Get the new current bullet count.
+			// var newCurrent = TotalBulletCount + CurrentBulletCount;
+			// // Subtract from the total ammo.
+			// TotalBulletCount -= (MagSize - CurrentBulletCount).Clamp(0, TotalBulletCount);
+			// // If the new current is larger than the magazine size, then use the
+			// // magazine size instead.
+			// CurrentBulletCount = newCurrent > MagSize ? MagSize : newCurrent;
 		}
 
 
@@ -92,10 +98,16 @@ public partial class AmmoWeapon : Weapon
 	private void SingleBulletReload()
 	{
 		// If there's no ammo to reload then return.
-		if (TotalBulletCount <= 0)
-			return;
+		// if (TotalBulletCount <= 0)
+		// 	return;
 		// If the current magazine is already full.
 		if (CurrentBulletCount >= MagSize)
+			return;
+		if (Owner == null)
+			return;
+
+		var fplayer = Owner as FearfulCryPlayer;
+		if (fplayer.AmmoCount(AmmoType) <= 0)
 			return;
 
 		// Reset the reload times.
@@ -103,8 +115,12 @@ public partial class AmmoWeapon : Weapon
 		TimeSinceReloadSingleBullet = 0;
 
 		// Reload the single bullet.
-		CurrentBulletCount++;
-		TotalBulletCount--;
+		
+		var taken = fplayer.TakeAmmo( AmmoType, 1 );
+		CurrentBulletCount += taken;
+		// CurrentBulletCount++;
+		// TotalBulletCount--;
+
 
 		// Plays the reload animation again (animgraph handles replays)
 		StartReloadEffects();
@@ -131,4 +147,6 @@ public partial class AmmoWeapon : Weapon
 		// at a higher priority.
 		base.Simulate(player);
 	}
+
+	public override AmmoType GetAmmoType() => AmmoType;
 }

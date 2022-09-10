@@ -1,7 +1,12 @@
 ﻿using Sandbox;
 using System.Collections.Generic;
 
-public partial class Weapon : BaseWeapon, IUse
+public interface IAmmoTypeWeapon
+{
+	AmmoType GetAmmoType();
+}
+
+public partial class Weapon : BaseWeapon, IUse, IAmmoTypeWeapon
 {
 	// the amount of time before you can use this weapon after deploying it.
 	public virtual float DeployTime => 0.6f;
@@ -156,4 +161,6 @@ public partial class Weapon : BaseWeapon, IUse
 			yield return tr; // Return each trace result once at a time.
 		}
 	}
+
+	public virtual AmmoType GetAmmoType() => AmmoType.None;
 }

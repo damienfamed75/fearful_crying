@@ -1,3 +1,5 @@
+using System.Security;
+using FearfulCry.player;
 using Sandbox;
 
 public enum AmmoType
@@ -61,26 +63,27 @@ public partial class Ammunition : ModelEntity, IUse
 
 	public bool OnUse( Entity user )
 	{
-		var player = user as Player;
+		var player = user as FearfulCryPlayer;
 
         if (Owner != null)
 			return false;
 
-		for ( int i = 0; i < player.Inventory.Count(); i++) {
-			var ent = player.Inventory.GetSlot( i );
-            // If this entity is not an ammo weapon then continue to the next
-			// inventory slot.
-            if (ent is not AmmoWeapon aw)
-				continue;
+		// If the player doesn't have full ammunition of this type then
+		// attempt to give the player ammo.
+		if (player.AmmoCount(AmmoType) != FearfulCryPlayer.MaxAmmo(AmmoType)) {
+			var taken = player.GiveAmmo( AmmoType, AmmoAmount );
+			PlaySound( SoundPath );
 
-			// Check if ammo types match.
-			if (aw.AmmoType == AmmoType) {
-				aw.TotalBulletCount += AmmoAmount;
-				PlaySound( SoundPath );
+			// Get the remaining amount of ammo left in this entity.
+			var remaining = AmmoAmount - taken;
+			AmmoAmount = remaining;
+
+			// If there's nothing remaining then delete.
+			if (remaining == 0) {
 				Delete();
 			}
 		}
 
-        return false;
+		return false;
 	}
 }
