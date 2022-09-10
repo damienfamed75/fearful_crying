@@ -44,6 +44,8 @@ public class NavSteer
         if (!avoidance.IsNearlyZero()) {
 			Output.Direction = (Output.Direction + avoidance).Normal;
 		}
+
+		// DebugDrawPath();
 	}
 
     /// <summary>

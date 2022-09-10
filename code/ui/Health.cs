@@ -5,24 +5,27 @@ using Sandbox.UI.Construct;
 
 public class Health : Panel
 {
-	// public Label Label;
-
 	public Label CurrentHealth;
 	public Label MaxHealth;
 	public Label Bar;
 	public Label BarGrey;
-	
+
+	private Color HighHealth;
+	private Color LowHealth;
+
 	public static Health Current { get; private set; }
 
 	public Health()
     {
 		Current = this;
 
-		CurrentHealth = Add.Label( "🩸 ", "health-current" );
-		// MaxHealth = Add.Label( "100", "health-max" );
-		Bar = Add.Label( "", "health-bar" );
-		BarGrey = Add.Label( "", "health-bar-grey" );
-		// Label = Add.Label( "100", "value" );
+		HighHealth = (Color)Color.Parse( "#00ff5f" );
+		LowHealth = (Color)Color.Parse( "#bf250f" );
+
+		Bar = AddChild<Label>( "health-bar" );
+		BarGrey = AddChild<Label>( "health-bar-grey" );
+		CurrentHealth = AddChild<Label>( "health-current" );
+		CurrentHealth.SetText( "🩸 " );
 	}
 
     public override void Tick()
@@ -35,13 +38,9 @@ public class Health : Panel
 		// Width maximum
 		var width = 200;
 		var barWidth = width * (player.Health / player.MaxHealth).Clamp( 0, 1 );
-		
-		Bar.Style.Width = barWidth;
-		// BarGrey.Style.Width = barWidth;
-		BarGrey.Style.Width = width - barWidth;
 
-		BarGrey.Style.BackgroundColor = (Color)Color.Parse("#111");
-		// BarGrey.Style.
+		Bar.Style.Width = barWidth;
+		BarGrey.Style.Width = width - barWidth;
 
 		if (player.Health == player.MaxHealth) {
 			Bar.Style.BorderBottomRightRadius = 5;
@@ -50,19 +49,13 @@ public class Health : Panel
 			Bar.Style.BorderBottomRightRadius = 0;
 			Bar.Style.BorderTopRightRadius = 0;
 		}
-		
-		// var right = 150;
-		// var left = 150;
 
-		// CurrentHealth.Style.Right = right;
-		// CurrentHealth.Style.FontColor = (Color)Color.Parse( "#ffffff" );
-		// MaxHealth.Style.Left = left;
-
-		var color = Color.Parse("#00ff5f");
-
-		// todo change color based on amount of health left.
-
-		Bar.Style.BackgroundColor = color;
+		// Make the color more red based on how little health the player has.
+		Bar.Style.BackgroundColor = Color.Lerp(
+			LowHealth,
+			HighHealth,
+			player.Health / player.MaxHealth
+		);
 
 		SetClass( "low", player.Health < 40.0f );
 		SetClass("empty", player.Health <= 0.0f);

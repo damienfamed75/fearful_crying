@@ -8,7 +8,7 @@ public class Ammo : Panel
 
 	public Ammo()
     {
-		Label = Add.Label( "", "value" );
+		Label = AddChild<Label>("value");
 	}
 
     public override void Tick()

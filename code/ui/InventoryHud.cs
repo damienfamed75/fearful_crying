@@ -31,7 +31,7 @@ public class InventoryHud : Panel
 	public InventoryHud()
     {
 		Current = this;
-		Items = Add.Label( "", "items" );
+		Items = AddChild<Label>( "items" );
 		StyleSheet.Load( "/ui/InventoryHud.scss" );
 	}
 
